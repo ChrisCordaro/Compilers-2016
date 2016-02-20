@@ -33,16 +33,43 @@ public class Token {
 			type = "stringWord";
 			break;
 		case 6:
-			type = "booleanWord";
+			type = "false";
 			break;
 		case 7:
-			type = "equality";
+			type = "true";
 			break;
 		case 8:
-			type = "nonEquality";
+			type = "booleanWord";
 			break;
 		case 9:
-			type = "alpha";
+			type = "alpha/ID";
+			break;
+		case 10:
+			type = "equality";
+			break;
+		case 11:
+			type = "assign";
+			break;
+		case 12:
+			type = "leftParen";
+			break;
+		case 13:
+			type = "rightParen";
+			break;
+		case 14:
+			type = "digit";
+			break;
+		case 15:
+			type = "leftBrace";
+			break;
+		case 16:
+			type = "rightBrace";
+			break;
+		case 17:
+			type = "quote";
+			break;
+		case 18:
+			type = "endProgram";
 			break;
 		}
 	}
