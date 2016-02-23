@@ -45,32 +45,37 @@ public class Token {
 			type = "alpha/ID";
 			break;
 		case 10:
-			type = "equality";
+			type = "boolOp";
 			break;
 		case 11:
-			type = "assign";
+			type = "boolOp";
 			break;
 		case 12:
-			type = "leftParen";
+			type = "assign";
 			break;
 		case 13:
-			type = "rightParen";
+			type = "leftParen";
 			break;
 		case 14:
-			type = "digit";
+			type = "rightParen";
 			break;
 		case 15:
-			type = "leftBrace";
+			type = "digit";
 			break;
 		case 16:
-			type = "rightBrace";
+			type = "leftBrace";
 			break;
 		case 17:
-			type = "quote";
+			type = "rightBrace";
 			break;
 		case 18:
-			type = "endProgram";
+			type = "quote";
 			break;
+		case 19:
+			type = "intOp";
+			break;
+		case 20:
+			type = "endProgram";
 		}
 	}
 	public String getValue() {
