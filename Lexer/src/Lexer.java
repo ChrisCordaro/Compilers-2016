@@ -30,6 +30,7 @@ public class Lexer {
 	private static String leftBrace = "(\\{)";
 	private static String rightBrace = "(\\})";
 	private static String quote = "(\")";
+	private static String string = "(\"([^\"]*)\")";
 
 	private static String equality = "(==)";
 	private static String notEqual = "(!=)";
@@ -38,7 +39,7 @@ public class Lexer {
 	private static Pattern p1 = Pattern.compile(printPattern + "|" + whilePattern + "|" + intPattern + "|" + ifPattern
 			+ "|" + stringPattern + "|" + falsePattern + "|" + truePattern + "|" + booleanPattern + "|" + alpha + "|"
 			+ equality + "|" + notEqual + "|" + assign + "|" + leftParen + "|" + rightParen + "|" + digit + "|"
-			+ leftBrace + "|" + rightBrace + "|" + quote + "|" + endOfProg);
+			+ leftBrace + "|" + rightBrace + "|" + string + "|" + intOp + "|" + endOfProg);
 
 	private static ArrayList<Character> charArray = new ArrayList<Character>();
 	private static ArrayList<Token> tokenArray = new ArrayList<Token>();
@@ -46,6 +47,8 @@ public class Lexer {
 
 	private static int parseIndex = 0;
 	private static boolean continueParse = true;
+
+	private static boolean inString = false;
 
 	public static void main(String[] args) throws IOException {
 		FileInputStream fileInput = new FileInputStream("C:/Users/Chris/Desktop/test.txt");
@@ -63,7 +66,10 @@ public class Lexer {
 
 		testForSpace(charArray);
 		// System.out.println(analyzeList(charArray));
-		if (checkBadInput(analyzeList(charArray))) {
+		addEOP(charArray);
+		if (testProperQuote(charArray)) {
+			System.out.println("FIX YOUR QUOTES");
+		} else if (checkBadInput(analyzeList(charArray))) {
 			System.out.println("I CANT LET YOU CONTINUE YOU ENTERED AN INVALID CHAR");
 		} else {
 			System.out.println("CONTINUING ALONG ALL CHARACTERS ARE GOOD");
@@ -94,6 +100,19 @@ public class Lexer {
 	// Iterates through arraylist creating a new array list of characters
 	// Until a space is found. (May have to fix how it recognizes a space)
 	// Need to add functionality that will tell the user where the error exists.
+
+	public static boolean checkLexError(ArrayList<Character> x) {
+		if (checkBadInput(analyzeList(charArray))) {
+			if (testProperQuote(x)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	public static void testForSpace(ArrayList<Character> x) {
 
 		int counter = 1;
@@ -103,6 +122,25 @@ public class Lexer {
 
 				charArray.add(x.get(i));
 				// System.out.println(x.get(i));
+
+			}
+			if (x.get(i) == '"') {
+				// System.out.println("GOT ONE OF THEM DOUBLES");
+				inString = true;
+				while (inString) {
+					if (x.get(i) != '"') {
+						charArray.add(x.get(i));
+					} else {
+						inString = false;
+					}
+				}
+				/*
+				 * for (i = i + 1; x.get(i) != '"'; i++) { //System.out.println(
+				 * "IN A STRING"); charArray.add(x.get(i)); }
+				 */
+				// if (x.get(i) == '"') {
+				// charArray.add(x.get(i));
+				// }
 
 			}
 
@@ -122,14 +160,39 @@ public class Lexer {
 		}
 	}
 
+	public static boolean testProperQuote(ArrayList<Character> x) {
+		int quoteCount = 0;
+		for (int i = 0; i < x.size(); i++) {
+			if (x.get(i) == '"') {
+				quoteCount++;
+			}
+		}
+		if ((quoteCount & 1) == 0) {
+			return false; // Even
+		} else {
+
+			return true; // ODD
+		}
+
+	}
+	
+	public static void addEOP(ArrayList<Character> x){
+		int i = x.size() - 1;
+		if(x.get(i) != '$'){
+			x.add('$');
+			System.out.println("I TOOK THE LIBERTY TO ADD AN EOP CHARACTER FOR YOU");
+		}
+	}
+
 	// This checks through the chaacter array to make sure that no 'bad' tokens
 	// get through
 	// If there is a bad token it will spit out an error and will not continue
 	public static boolean checkBadInput(String s) {
+
 		Pattern p2 = Pattern.compile("(\\s)" + "|" + printPattern + "|" + whilePattern + "|" + intPattern + "|"
 				+ ifPattern + "|" + stringPattern + "|" + falsePattern + "|" + truePattern + "|" + booleanPattern + "|"
 				+ alpha + "|" + equality + "|" + notEqual + "|" + assign + "|" + leftParen + "|" + rightParen + "|"
-				+ digit + "|" + leftBrace + "|" + rightBrace + "|" + quote + "|" + intOp + "|" + endOfProg);
+				+ digit + "|" + leftBrace + "|" + rightBrace + "|" + string + "|" + endOfProg + "|" + intOp);
 		Matcher m = p2.matcher(s);
 
 		String removed = m.replaceAll("");
@@ -163,7 +226,7 @@ public class Lexer {
 		Pattern r2 = Pattern.compile(printPattern + "|" + whilePattern + "|" + intPattern + "|" + ifPattern + "|"
 				+ stringPattern + "|" + falsePattern + "|" + truePattern + "|" + booleanPattern + "|" + alpha + "|"
 				+ equality + "|" + notEqual + "|" + assign + "|" + leftParen + "|" + rightParen + "|" + digit + "|"
-				+ leftBrace + "|" + rightBrace + "|" + quote + "|" + intOp + "|" + endOfProg);
+				+ leftBrace + "|" + rightBrace + "|" + string + "|" + endOfProg + "|" + intOp);
 
 		Matcher m2 = r2.matcher(s);
 
@@ -172,7 +235,7 @@ public class Lexer {
 		boolean found = false;
 
 		while (m2.find()) {
-			while (counter < 21 && !found) {
+			while (counter < 22 && !found) {
 				if (m2.group(counter) != null) {
 					// if you match on a quote set global testForString var to
 					// true and make everything until the next quote a
@@ -201,6 +264,7 @@ public class Lexer {
 	 */
 
 	public static void matchAndAnnihilate(String expectedToken) {
+
 		if (tokenArray.get(0).getType() == expectedToken) {
 			System.out.println("PARSED!: EXPECTING " + expectedToken + " AND GOT " + tokenArray.get(0).getType());
 			tokenArray.remove(0);
@@ -213,10 +277,24 @@ public class Lexer {
 	}
 
 	public static void parseProgram() {
-		parseBlock();
-		if(continueParse){
+		if (continueParse) {
+			parseBlock();
+		}
+		/*
+		 * if(continueParse && !tokenArray.isEmpty()){
+		 * matchAndAnnihilate("endProgram"); }else if(tokenArray.isEmpty()){
+		 * System.out.println("NO END OF PROGRAM FOUND"); }
+		 */
+		if (continueParse) {
 			matchAndAnnihilate("endProgram");
 		}
+
+		if (!tokenArray.isEmpty() && continueParse) {
+			parseProgram();
+		} else {
+			continueParse = false;
+		}
+
 	}
 
 	// Might have to remove the token instead of using a parseIndex
@@ -230,9 +308,19 @@ public class Lexer {
 		if (continueParse) {
 			matchAndAnnihilate("rightBrace");
 		}
-		/*if (continueParse) {
-			matchAndAnnihilate("endProgram");
-		}*/
+		// parseProgram();
+
+		// THE PROBLEM LIES HERE
+		/*
+		 * if (continueParse && tokenArray.isEmpty()) { System.out.println(
+		 * "WARNING NEED AN END PROGRAM"); }
+		 */
+
+		/*
+		 * if (continueParse && tokenArray.isEmpty() == false) {
+		 * matchAndAnnihilate("endProgram"); } if (tokenArray.isEmpty()) {
+		 * continueParse = false; } else { parseProgram(); }
+		 */
 	}
 
 	// Look to see if there is something between the braces
@@ -243,7 +331,9 @@ public class Lexer {
 				|| tokenArray.get(0).getType() == "alpha/ID" || tokenArray.get(0).getType() == "ifWord"
 				|| tokenArray.get(0).getType() == "whileWord" || tokenArray.get(0).getType() == "leftBrace") {
 			parseStatement();
-			parseStatementList();
+			if (continueParse) {
+				parseStatementList();
+			}
 		} else {
 			// comment
 
@@ -262,8 +352,6 @@ public class Lexer {
 			parseIfStatement();
 		} else if (tokenArray.get(0).getType() == "whileWord") {
 			parseWhileStatement();
-		} else if (tokenArray.get(0).getType() == "alpha/ID") {
-			parseVarDecl();
 		} else if (tokenArray.get(0).getType() == "leftBrace") {
 			parseBlock();
 		}
@@ -294,10 +382,10 @@ public class Lexer {
 		if (continueParse) {
 			matchAndAnnihilate("alpha/ID");
 		}
-		if (tokenArray.get(0).getType() == "assign") {
-			if (continueParse) {
-				matchAndAnnihilate("assign");
-			}
+		if (tokenArray.get(0).getType() == "assign" && continueParse) {
+
+			matchAndAnnihilate("assign");
+
 		} else {
 			if (continueParse) {
 				matchAndAnnihilate("assign");
@@ -332,45 +420,6 @@ public class Lexer {
 		}
 	}
 
-	public static void parseBoolOp() {
-		if (tokenArray.get(0).getType() == "boolOp") {
-			if (continueParse) {
-				matchAndAnnihilate("boolOp");
-			}
-		} else {
-			matchAndAnnihilate("boolOp");
-
-		}
-	}
-
-	// Expressions are intExprs, stringExpr, booleanExpr, ID
-	// NOT WORRYING ABOUT STRINGS AT THE MOMENT..
-	public static void parseExpression() {
-		if (tokenArray.get(0).getType() == "digit") {
-			parseIntExpression();
-		} else if (tokenArray.get(0).getType() == "true" || tokenArray.get(0).getType() == "false"
-				|| tokenArray.get(0).getType() == "leftParen") {
-			parseBoolExpression();
-		} else if (tokenArray.get(0).getType() == "alpha/ID") {
-			parseID();
-		} else if (tokenArray.get(0).getType() == "ifWord") {
-			//does the grammar allow for an if inside a print
-			parseIfStatement();
-		} else {
-			System.out.println("BIG ERROR");
-			continueParse = false;
-		}
-
-		// A boolean expression is the only expression that begins with a (
-		/*
-		 * if (tokenArray.get(0).getType() == "true" ||
-		 * tokenArray.get(0).getType() == "false" || tokenArray.get(0).getType()
-		 * == "leftParen") { parseBoolExpression(); } if
-		 * (tokenArray.get(0).getType() == "alpha/ID") { parseID(); }
-		 */
-
-	}
-
 	// Boolean expression = (expr boolop exp) OR boolval
 	public static void parseBoolExpression() {
 		if (tokenArray.get(0).getType() == "true" || tokenArray.get(0).getType() == "false") {
@@ -380,6 +429,10 @@ public class Lexer {
 				if (continueParse) {
 					matchAndAnnihilate("leftParen");
 				}
+			} else {
+				continueParse = false;
+				System.out.println("EXPECTING 'TRUE', 'FALSE', OR BOOL EXPRESSION");
+				// continueParse = false;
 			}
 
 			if (continueParse) {
@@ -418,6 +471,121 @@ public class Lexer {
 
 	}
 
+	public static void parseBoolOp() {
+		if (tokenArray.get(0).getType() == "boolOp") {
+			if (continueParse) {
+				matchAndAnnihilate("boolOp");
+			}
+		} else {
+			matchAndAnnihilate("boolOp");
+
+		}
+	}
+
+	// Expressions are intExprs, stringExpr, booleanExpr, ID
+	// NOT WORRYING ABOUT STRINGS AT THE MOMENT..
+	public static void parseExpression() {
+		if (tokenArray.get(0).getType() == "digit") {
+			parseIntExpression();
+		} else if (tokenArray.get(0).getType() == "true" || tokenArray.get(0).getType() == "false"
+				|| tokenArray.get(0).getType() == "leftParen") {
+			parseBoolExpression();
+		} else if (tokenArray.get(0).getType() == "alpha/ID") {
+			parseID();
+		} else if (tokenArray.get(0).getType() == "ifWord") {
+			// does the grammar allow for an if inside a print
+			parseIfStatement();
+		} else if (tokenArray.get(0).getType() == "string") {
+			parseStringExpression();
+		} else {
+			// System.out.println("BIG ERROR");
+			// continueParse = false;
+		}
+
+	}
+
+	// String expressions are " charList "
+	// Char list is a char Charlist or space Charlist or Nothing
+	// Currently only handling a char charlist no spaces or empty string
+	public static void parseStringExpression() {
+		Pattern p = Pattern.compile("\"([^\"\\d]*)\"");
+		Matcher m = p.matcher(tokenArray.get(0).getValue());
+		if (continueParse) {
+			if (m.find()) {
+				if (parseCharList(m.group(1))) {
+					matchAndAnnihilate(tokenArray.get(0).getType());
+				} else {
+					System.out.println("ERROR IN YOUR STRING ");
+					continueParse = false;
+				}
+
+			} else {
+				System.out.println("ERROR IN YOUR STRING ");
+				continueParse = false;
+			}
+		}
+	}
+
+	public static boolean parseChar(String s) {
+		Pattern p = Pattern.compile("([a-z])");
+		Matcher m = p.matcher(s);
+		if (m.matches()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// Char list is a char Charlist, space Charlist, or empty
+	public static boolean parseCharList(String s) {
+		String[] result = s.split("");
+		int counter = 0;
+		if (parseCharList(result, counter)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public static boolean parseCharList(String[] s, int curIndex) {
+		if (!(curIndex < s.length)) {
+			if (parseChar(s[curIndex])) {
+				curIndex++;
+				if (parseCharList(s, curIndex)) {
+					return true;
+				} else {
+					return false;
+				}
+
+			} else if (parseSpace(s[curIndex])) {
+				curIndex++;
+
+				if (parseCharList(s, curIndex)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+
+		} else {
+			return true;
+		}
+	}
+
+	public static boolean parseSpace(String s) {
+		Pattern p = Pattern.compile("(\\s)");
+		Matcher m = p.matcher(s);
+
+		if (m.matches()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static void parseBoolVal() {
 		// Handles the case of just true/false
 		if (tokenArray.get(0).getType() == "false" || tokenArray.get(0).getType() == "true") {
@@ -439,26 +607,25 @@ public class Lexer {
 		if (continueParse) {
 			matchAndAnnihilate("digit");
 		}
-		if(tokenArray.get(0).getType() == "intOp"){
-			//System.out.println("FOUND THE +");
-			parseIntOp();
-		}
-		/*if (tokenArray.get(0).getType() == "addOp") {
-			if (continueParse) {
-				matchAndAnnihilate("addOp");
-				parseExpression();
-			}
-		} else {
-			// comments
-		}*/
-	}
-	
-	public static void parseIntOp(){
-		if(continueParse){
+		if (tokenArray.get(0).getType() == "intOp" && continueParse) {
+			// System.out.println("FOUND THE +");
 			matchAndAnnihilate("intOp");
+		}
+
+		if (continueParse) {
 			parseExpression();
 		}
+		/*
+		 * if (tokenArray.get(0).getType() == "addOp") { if (continueParse) {
+		 * matchAndAnnihilate("addOp"); parseExpression(); } } else { //
+		 * comments }
+		 */
 	}
+
+	/*
+	 * public static void parseIntOp() { if (continueParse) {
+	 * matchAndAnnihilate("intOp"); parseExpression(); } }
+	 */
 
 	// var declaration is a type followed by id
 	public static void parseVarDecl() {
@@ -472,6 +639,7 @@ public class Lexer {
 		if (continueParse) {
 			matchAndAnnihilate("alpha/ID");
 		}
+
 	}
 
 	public static void parseWhile(ArrayList<Token> t) {

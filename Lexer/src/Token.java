@@ -69,14 +69,20 @@ public class Token {
 			type = "rightBrace";
 			break;
 		case 18:
-			type = "quote";
+			type = "string";
 			break;
 		case 19:
 			type = "intOp";
 			break;
 		case 20:
 			type = "endProgram";
+			break;
+		case 21:
+			type = "intOp";
+			break;
+
 		}
+		
 	}
 	public String getValue() {
 		return value;
