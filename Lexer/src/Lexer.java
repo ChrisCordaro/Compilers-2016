@@ -1,8 +1,8 @@
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,17 +49,43 @@ public class Lexer {
 	private static boolean continueParse = true;
 
 	private static boolean inString = false;
+	private static boolean verbose = false;
 
 	public static void main(String[] args) throws IOException {
-		FileInputStream fileInput = new FileInputStream("C:/Users/Chris/Desktop/test.txt");
+		// Alter file path to
+		// FileInputStream fileInput = new
+		// FileInputStream("C:/Users/Chris/Desktop/test.txt");
+		Scanner Scanscan = new Scanner(System.in);
+		System.out.print("Input file directory:");
+		String filename = Scanscan.nextLine();
+		FileInputStream inputFile = new FileInputStream(filename);
+		Scanner reader = new Scanner(inputFile);
+
+		
+		System.out.println("Would you like to enjoy verbose mode? Please enter capital(Y/N)");
+		Scanner verboseScanner = new Scanner(System.in);
+		String input = verboseScanner.next();
+		String[] a = new String[2];
+		a[0] = "Y";
+		a[1] = "N";
+		if (a[0].equals(input)) {
+			System.out.println("GOOOODD CHOICE");
+			verbose = true;
+		}else if(a[1].equals(input)){
+			System.out.println("BAAADDD CHOICE");
+		}else{
+			System.out.println("INVALID INPUT DEFAULTING TO NO");
+		}
+		
 
 		ArrayList<Character> charArray = new ArrayList<Character>();
 
 		int r;
-		while ((r = fileInput.read()) != -1) {
+		while ((r = inputFile.read()) != -1) {
 			char c = (char) r;
-
-			System.out.println(c);
+			if (verbose) {
+				System.out.println(c);
+			}
 			charArray.add(c);
 
 		}
@@ -74,7 +100,9 @@ public class Lexer {
 		} else {
 			System.out.println("CONTINUING ALONG ALL CHARACTERS ARE GOOD");
 			testString(analyzeList(charArray));
+
 			System.out.println("Here are the valid characters that will be analyzed " + validArray);
+
 			for (int i = 0; i < tokenArray.size(); i++) {
 
 				// System.out.println("Token " + i + " : " +
@@ -93,7 +121,7 @@ public class Lexer {
 
 		// System.out.println(tokenArray.get(2).getType());
 
-		fileInput.close();
+		inputFile.close();
 
 	}
 
@@ -154,7 +182,9 @@ public class Lexer {
 
 			// if (x.get(i) == ' ') {
 			// System.out.println("List of characters");
-			System.out.println("Characters being analyzed " + charArray);
+			if (verbose) {
+				System.out.println("Characters being analyzed " + charArray);
+			}
 
 			// }
 		}
@@ -175,10 +205,10 @@ public class Lexer {
 		}
 
 	}
-	
-	public static void addEOP(ArrayList<Character> x){
+
+	public static void addEOP(ArrayList<Character> x) {
 		int i = x.size() - 1;
-		if(x.get(i) != '$'){
+		if (x.get(i) != '$') {
 			x.add('$');
 			System.out.println("I TOOK THE LIBERTY TO ADD AN EOP CHARACTER FOR YOU");
 		}
@@ -242,8 +272,10 @@ public class Lexer {
 					// character.
 
 					validArray.add(m2.group());
-					System.out.println("valid array");
-					System.out.println(validArray);
+					if (verbose) {
+						System.out.println("valid array");
+						System.out.println(validArray);
+					}
 					tokenArray.add(token = new Token(counter, m2.group(counter), 1));
 					found = true;
 				}
