@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ public class Lexer {
 	private static String leftBrace = "(\\{)";
 	private static String rightBrace = "(\\})";
 	private static String quote = "(\")";
+	//make string not accept captial letters
 	private static String string = "(\"([^\"]*)\")";
 
 	private static String equality = "(==)";
@@ -46,15 +48,19 @@ public class Lexer {
 	private static ArrayList<String> validArray = new ArrayList<String>();
 
 	private static int parseIndex = 0;
-	private static boolean continueParse = true;
+	//private static boolean continueParse = true;
 
 	private static boolean inString = false;
 	private static boolean verbose = false;
+	
+	static Parser myParser = new Parser();
 
 	public static void main(String[] args) throws IOException {
 		// Alter file path to
 		// FileInputStream fileInput = new
 		// FileInputStream("C:/Users/Chris/Desktop/test.txt");
+		
+		
 		Scanner Scanscan = new Scanner(System.in);
 		System.out.print("Input file directory:");
 		String filename = Scanscan.nextLine();
@@ -89,6 +95,7 @@ public class Lexer {
 			charArray.add(c);
 
 		}
+		
 
 		testForSpace(charArray);
 		// System.out.println(analyzeList(charArray));
@@ -109,7 +116,7 @@ public class Lexer {
 				// tokenArray.get(i).getValue());
 				System.out.println("Token " + i + " : " + tokenArray.get(i).getType());
 			}
-			parseProgram();
+			myParser.parseProgram();
 			for (int i = 0; i < tokenArray.size(); i++) {
 				System.out.println(tokenArray.get(i).getType());
 			}
@@ -288,13 +295,17 @@ public class Lexer {
 		// return tokenArray;
 		return validArray;
 	};
+	
+	public static ArrayList<Token> getTokenArray(){
+		return tokenArray;
+	}
 
 	// Let's try some parsing....maybe
 	/*
 	 * This is the basic idea but I'm not too sure how to actually go about
 	 * checking if there are correctly closed blockes
 	 */
-
+/*
 	public static void matchAndAnnihilate(String expectedToken) {
 
 		if (tokenArray.get(0).getType() == expectedToken) {
@@ -317,6 +328,7 @@ public class Lexer {
 		 * matchAndAnnihilate("endProgram"); }else if(tokenArray.isEmpty()){
 		 * System.out.println("NO END OF PROGRAM FOUND"); }
 		 */
+	/*
 		if (continueParse) {
 			matchAndAnnihilate("endProgram");
 		}
@@ -352,7 +364,7 @@ public class Lexer {
 		 * if (continueParse && tokenArray.isEmpty() == false) {
 		 * matchAndAnnihilate("endProgram"); } if (tokenArray.isEmpty()) {
 		 * continueParse = false; } else { parseProgram(); }
-		 */
+		 *
 	}
 
 	// Look to see if there is something between the braces
@@ -439,7 +451,7 @@ public class Lexer {
 			 * Still need to figure out how to get multiple blocks. I think it
 			 * has to be in the statement check as a block is a statement as
 			 * itself parseBlock();
-			 */
+			 *
 			parseBlock();
 		}
 	}
@@ -499,7 +511,7 @@ public class Lexer {
 		 * if (continueParse) { // matchAndAnnihilate("rightParen"); // } /*
 		 * parseExpression(); matchAndAnnihilate("boolOp"); parseExpression();
 		 * matchAndAnnihilate("rightParen");
-		 */
+		 *
 
 	}
 
@@ -651,13 +663,13 @@ public class Lexer {
 		 * if (tokenArray.get(0).getType() == "addOp") { if (continueParse) {
 		 * matchAndAnnihilate("addOp"); parseExpression(); } } else { //
 		 * comments }
-		 */
+		 *
 	}
 
 	/*
 	 * public static void parseIntOp() { if (continueParse) {
 	 * matchAndAnnihilate("intOp"); parseExpression(); } }
-	 */
+	 *
 
 	// var declaration is a type followed by id
 	public static void parseVarDecl() {
@@ -676,5 +688,5 @@ public class Lexer {
 
 	public static void parseWhile(ArrayList<Token> t) {
 
-	}
+	}*/
 }
