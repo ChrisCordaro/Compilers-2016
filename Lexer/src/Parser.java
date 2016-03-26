@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 public class Parser {
 	private static boolean continueParse = true;
+	private static TreeNodeList myTree = new TreeNodeList();
+	
 	
 	public static void Parser(){
 		
@@ -14,11 +16,17 @@ public class Parser {
 		 * checking if there are correctly closed blockes
 		 */
 
+		//Here is where you create a leaf node
 		public static void matchAndAnnihilate(String expectedToken) {
 
 			if (Lexer.getTokenArray().get(0).getType() == expectedToken) {
 				System.out.println("PARSED!: EXPECTING " + expectedToken + " AND GOT " + Lexer.getTokenArray().get(0).getType());
+				
+				System.out.println("Creating leaf node of " + expectedToken);
+				myTree.addLeafNode(expectedToken);
+				
 				Lexer.getTokenArray().remove(0);
+				
 			} else {
 				System.out.println("PARSE ERROR: EXPECTING " + expectedToken + " BUT GOT " +  Lexer.getTokenArray().get(0).getType());
 				System.out.println("STOPPING ALL PARSING");
@@ -29,7 +37,12 @@ public class Parser {
 
 		public static void parseProgram() {
 			if (continueParse) {
+				//TreeNode root = new TreeNode("root");
+				myTree.addRootNode("goal");
+				System.out.println(myTree.getRoot().getData());
 				parseBlock();
+				
+				
 			}
 			/*
 			 * if(continueParse && !tokenArray.isEmpty()){
@@ -38,10 +51,12 @@ public class Parser {
 			 */
 			if (continueParse) {
 				matchAndAnnihilate("endProgram");
+				System.out.println("FINAL ROOT CHECK " + myTree.getRoot().getData());
 			}
 
 			if (!Lexer.getTokenArray().isEmpty() && continueParse) {
 				parseProgram();
+			
 			} else {
 				continueParse = false;
 			}
@@ -51,7 +66,10 @@ public class Parser {
 		// Might have to remove the token instead of using a parseIndex
 		public static void parseBlock() {
 			if (continueParse) {
+				myTree.addBranchNode("block");
+				System.out.println(myTree.getCurrItem().getData());
 				matchAndAnnihilate("leftBrace");
+				
 			}
 			if (continueParse) {
 				parseStatementList();
@@ -81,6 +99,9 @@ public class Parser {
 					|| Lexer.getTokenArray().get(0).getType() == "booleanWord" || Lexer.getTokenArray().get(0).getType() == "printWord"
 					||Lexer.getTokenArray().get(0).getType() == "alpha/ID" || Lexer.getTokenArray().get(0).getType() == "ifWord"
 					|| Lexer.getTokenArray().get(0).getType() == "whileWord" || Lexer.getTokenArray().get(0).getType() == "leftBrace") {
+				
+				myTree.addBranchNode("statementList");
+				System.out.println(myTree.getCurrItem().getData());
 				parseStatement();
 				if (continueParse) {
 					parseStatementList();
@@ -94,6 +115,8 @@ public class Parser {
 		public static void parseStatement() {
 			if (Lexer.getTokenArray().get(0).getType() == "intWord" || Lexer.getTokenArray().get(0).getType() == "stringWord"
 					|| Lexer.getTokenArray().get(0).getType() == "booleanWord") {
+				myTree.addBranchNode("statement");
+				System.out.println(myTree.getCurrItem().getData());
 				parseVarDecl();
 			} else if (Lexer.getTokenArray().get(0).getType() == "printWord") {
 				parsePrintStatement();
@@ -381,6 +404,9 @@ public class Parser {
 		// var declaration is a type followed by id
 		public static void parseVarDecl() {
 			if (continueParse) {
+				myTree.addBranchNode("varDecl");
+				System.out.println(myTree.getCurrItem().getData());
+				
 				matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
 				parseID();
 			}
@@ -388,6 +414,9 @@ public class Parser {
 
 		public static void parseID() {
 			if (continueParse) {
+				myTree.addBranchNode("ID");
+				System.out.println(myTree.getCurrItem().getData());
+				
 				matchAndAnnihilate("alpha/ID");
 			}
 
@@ -396,6 +425,8 @@ public class Parser {
 		public static void parseWhile(ArrayList<Token> t) {
 
 		}
+		
+		
 	
 	
 
