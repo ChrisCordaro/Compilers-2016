@@ -24,6 +24,7 @@ public class Parser {
 				
 				System.out.println("Creating leaf node of " + expectedToken);
 				myTree.addLeafNode(expectedToken);
+				System.out.println("Leaf Node Parent Test " + myTree.getCurrItem().getParent().getData());
 				
 				Lexer.getTokenArray().remove(0);
 				
@@ -41,6 +42,7 @@ public class Parser {
 				myTree.addRootNode("goal");
 				System.out.println(myTree.getRoot().getData());
 				parseBlock();
+				//myTree.climb();
 				
 				
 			}
@@ -51,11 +53,16 @@ public class Parser {
 			 */
 			if (continueParse) {
 				matchAndAnnihilate("endProgram");
+				myTree.climb();
 				System.out.println("FINAL ROOT CHECK " + myTree.getRoot().getData());
+				//System.out.println("Children of root test: " + myTree.getRoot().getChildren().get(0));
+				System.out.println("Children of root ");
+				myTree.rootChildren();
 			}
 
 			if (!Lexer.getTokenArray().isEmpty() && continueParse) {
 				parseProgram();
+				
 			
 			} else {
 				continueParse = false;
@@ -69,14 +76,19 @@ public class Parser {
 				myTree.addBranchNode("block");
 				System.out.println(myTree.getCurrItem().getData());
 				matchAndAnnihilate("leftBrace");
-				
+				myTree.climb();
+			
 			}
 			if (continueParse) {
 				parseStatementList();
+				myTree.climb();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("rightBrace");
+				myTree.climb();
 			}
+			
+			
 			// parseProgram();
 
 			// THE PROBLEM LIES HERE
@@ -103,6 +115,7 @@ public class Parser {
 				myTree.addBranchNode("statementList");
 				System.out.println(myTree.getCurrItem().getData());
 				parseStatement();
+				myTree.climb();
 				if (continueParse) {
 					parseStatementList();
 				}
@@ -110,6 +123,7 @@ public class Parser {
 				// comment
 
 			}
+		
 		}
 
 		public static void parseStatement() {
@@ -118,6 +132,7 @@ public class Parser {
 				myTree.addBranchNode("statement");
 				System.out.println(myTree.getCurrItem().getData());
 				parseVarDecl();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "printWord") {
 				parsePrintStatement();
 			} else if (Lexer.getTokenArray().get(0).getType() == "alpha/ID") {
@@ -129,6 +144,7 @@ public class Parser {
 			} else if (Lexer.getTokenArray().get(0).getType() == "leftBrace") {
 				parseBlock();
 			}
+			myTree.climb();
 			// comment
 		}
 
@@ -408,8 +424,11 @@ public class Parser {
 				System.out.println(myTree.getCurrItem().getData());
 				
 				matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
+				//myTree.climb();
 				parseID();
+				myTree.climb();
 			}
+			
 		}
 
 		public static void parseID() {
@@ -418,6 +437,7 @@ public class Parser {
 				System.out.println(myTree.getCurrItem().getData());
 				
 				matchAndAnnihilate("alpha/ID");
+				myTree.climb();
 			}
 
 		}

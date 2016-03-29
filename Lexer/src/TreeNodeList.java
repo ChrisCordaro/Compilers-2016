@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class TreeNodeList {
 	private TreeNode root;
@@ -46,32 +47,47 @@ public class TreeNodeList {
 		//put ourselves in parent.children
 		
 			TreeNode node = new TreeNode(data);
-			TreeNode temp = currItem;
+			//TreeNode temp = currItem;
 			
-			node.setParent(temp);
-			currItem = node;
-			node.getParent().getChildren().add(node);
+			//node.setParent(temp);
+			//currItem = node;
+			
+			node.setParent(this.currItem);
+			this.currItem.setChildren(node);
+			this.setCurrItem(node);
+			//node.getParent().getChildren().add(node);
 			System.out.println("Creating BRANCH of " + data);
-			System.out.println("CurrItem Test " + currItem.getData());
-			System.out.println("ROOT TEST " + root.getData());
+			System.out.println("His parent is " + node.getParent().getData());
+			//System.out.println("CurrItem Test " + currItem.getData()); 
+			//System.out.println("ROOT TEST " + root.getData());
 			
 			
 	}
 	
 	public void addLeafNode(String data){
 		TreeNode node = new TreeNode(data);
-		TreeNode temp = currItem;
+		//TreeNode temp = currItem;
+		node.setParent(this.currItem);
+		this.currItem.setChildren(node);
+		this.setCurrItem(node);
+	//	this.setCurrItem(node);
 		
-		node.setParent(temp);
-		setCurrItem(node);
-		node.getParent().getChildren().add(node);
-		//System.out.println("Creating BRANCH of " + data);
+		
+		//currItem.getParent().getChildren().add(node);
+		
+		
 	}
 	
-	public void climb(TreeNode t){
-		while(t.getParent() != null){
-			currItem = t.getParent();
+	public void climb(){
+		if(this.currItem != null){
+			this.currItem = this.currItem.getParent();
 		}
+	}
+	
+	public void rootChildren(){
+		ArrayList<TreeNode> t = root.getChildren();
+		for(TreeNode x : t)
+			System.out.println(x.getData());
 	}
 	
 	

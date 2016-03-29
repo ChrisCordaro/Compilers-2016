@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 public class TreeNode {
 
-    private static String data;
-    private static TreeNode parent;
-    private static ArrayList<TreeNode> children;
+    private  String data;
+    private  TreeNode parent;
+    private  ArrayList<TreeNode> children;
     
     public TreeNode(){
     	this.data = null;
@@ -45,6 +45,9 @@ public class TreeNode {
 		this.children = children;
 	}
 	
+	public void setChildren(TreeNode x){
+		this.children.add(x);
+	}
 
 
 }
