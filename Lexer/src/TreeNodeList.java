@@ -90,7 +90,23 @@ public class TreeNodeList {
 			System.out.println(x.getData());
 	}
 	
-
+	public void blockChildren(){
+		ArrayList<TreeNode> t = root.getChildren().get(0).getChildren();
+		for(TreeNode x : t){
+			System.out.println(x.getData());
+		}
+	}
+	
+	/*public String printTree(TreeNodeList t){
+		String traversalResult = "";
+		
+	}
+	
+	public void expand(TreeNode node,  int depth){
+		for(int i = 0; i < depth; i ++){
+			
+		}
+	}*/
 	
 	
 	
