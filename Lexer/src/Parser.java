@@ -58,6 +58,8 @@ public class Parser {
 				//System.out.println("Children of root test: " + myTree.getRoot().getChildren().get(0));
 				System.out.println("Children of root ");
 				myTree.rootChildren();
+				System.out.println("TRY TO GET CHILDREN OF BLOCK");
+				System.out.println(myTree.getRoot().getChildren().get(0).getChildren().toString());
 			}
 
 			if (!Lexer.getTokenArray().isEmpty() && continueParse) {
@@ -134,14 +136,27 @@ public class Parser {
 				parseVarDecl();
 				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "printWord") {
+				myTree.addBranchNode("statement");
+				System.out.println(myTree.getCurrItem().getData());
 				parsePrintStatement();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "alpha/ID") {
+				myTree.addBranchNode("statement");
+				System.out.println(myTree.getCurrItem().getData());
 				parseAssignmentStatement();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "ifWord") {
+				myTree.addBranchNode("statement");
+				System.out.println(myTree.getCurrItem().getData());
 				parseIfStatement();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "whileWord") {
+				myTree.addBranchNode("statement");
+				System.out.println(myTree.getCurrItem().getData());
 				parseWhileStatement();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "leftBrace") {
+				//WHAT TO DO HERE
 				parseBlock();
 			}
 			myTree.climb();
@@ -151,18 +166,26 @@ public class Parser {
 		// print statement is a print followed by ( expr )
 		public static void parsePrintStatement() {
 			if (continueParse) {
+				myTree.addBranchNode("printStatement");
+				System.out.println(myTree.getCurrItem().getData());
 				matchAndAnnihilate("printWord");
+				myTree.climb();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("leftParen");
+				myTree.climb();
 			}
 			if (continueParse) {
+				myTree.addBranchNode("expression");
+				System.out.println(myTree.getCurrItem().getData());
 				parseExpression();
+				myTree.climb();
 				// parseBoolOp();
 				// parseExpression();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("rightParen");
+				//myTree.climb();
 			}
 
 		}
@@ -276,17 +299,32 @@ public class Parser {
 		// NOT WORRYING ABOUT STRINGS AT THE MOMENT..
 		public static void parseExpression() {
 			if (Lexer.getTokenArray().get(0).getType() == "digit") {
+				myTree.addBranchNode("intExpression");
+				System.out.println(myTree.getCurrItem().getData());
 				parseIntExpression();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "true" || Lexer.getTokenArray().get(0).getType() == "false"
 					|| Lexer.getTokenArray().get(0).getType() == "leftParen") {
+				myTree.addBranchNode("boolExpression");
+				System.out.println(myTree.getCurrItem().getData());
 				parseBoolExpression();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "alpha/ID") {
+				myTree.addBranchNode("ID");
+				System.out.println(myTree.getCurrItem().getData());
 				parseID();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "ifWord") {
 				// does the grammar allow for an if inside a print
+				myTree.addBranchNode("ifExpression");
+				System.out.println(myTree.getCurrItem().getData());
 				parseIfStatement();
+				myTree.climb();
 			} else if (Lexer.getTokenArray().get(0).getType() == "string") {
+				myTree.addBranchNode("stringExpression");
+				System.out.println(myTree.getCurrItem().getData());
 				parseStringExpression();
+				myTree.climb();
 			} else {
 				// System.out.println("BIG ERROR");
 				// continueParse = false;
@@ -304,6 +342,7 @@ public class Parser {
 				if (m.find()) {
 					if (parseCharList(m.group(1))) {
 						matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
+						myTree.climb();
 					} else {
 						System.out.println("ERROR IN YOUR STRING ");
 						continueParse = false;
@@ -424,9 +463,9 @@ public class Parser {
 				System.out.println(myTree.getCurrItem().getData());
 				
 				matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
-				//myTree.climb();
-				parseID();
 				myTree.climb();
+				parseID();
+				//myTree.climb();
 			}
 			
 		}
