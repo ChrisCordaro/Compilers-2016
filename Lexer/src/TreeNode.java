@@ -48,6 +48,11 @@ public class TreeNode {
 	public void setChildren(TreeNode x){
 		this.children.add(x);
 	}
+	
+	
+	public void printChildren(){
+	//	while
+	}
 
 
 }

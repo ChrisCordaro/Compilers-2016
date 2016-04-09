@@ -66,7 +66,12 @@ public class Parser {
 				
 				System.out.println("::::::::::::::::");
 				System.out.println("AST");
+				
 				myASTree.blockChildren();
+				
+				System.out.println("AST children test");
+				//I THINK THIS WORKS?
+				myASTree.printChildren(myASTree.getRoot().getChildren());
 			}
 
 			if (!Lexer.getTokenArray().isEmpty() && continueParse) {
@@ -182,9 +187,15 @@ public class Parser {
 		public static void parsePrintStatement() {
 			if (continueParse) {
 				myCSTree.addBranchNode("printStatement");
+				myASTree.addBranchNode("print");
+				
 				System.out.println(myCSTree.getCurrItem().getData());
+				
 				matchAndAnnihilate("printWord");
+				//myASTree.addLeafNode("print");
+				
 				myCSTree.climb();
+				myASTree.climb();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("leftParen");
@@ -210,8 +221,12 @@ public class Parser {
 			if (continueParse) {
 				//may need another climb after making the branchNode
 				myCSTree.addBranchNode("assignmentStatement");
+				myASTree.addBranchNode("assignStatement");
+				
 				System.out.println(myCSTree.getCurrItem().getData());
+				
 				matchAndAnnihilate("alpha/ID");
+				myASTree.addLeafNode("alpha/ID");
 				myCSTree.climb();
 			}
 			if (Lexer.getTokenArray().get(0).getType() == "assign" && continueParse) {
@@ -237,9 +252,15 @@ public class Parser {
 		public static void parseIfStatement() {
 			if (continueParse) {
 				myCSTree.addBranchNode("ifStatement");
+				myASTree.addBranchNode("if");
+				
 				System.out.println(myCSTree.getCurrItem().getData());
+				
+				
 				matchAndAnnihilate("ifWord");
+				
 				myCSTree.climb();
+				//myASTree.climb();
 				
 				parseBoolExpression();
 				/*
@@ -250,6 +271,7 @@ public class Parser {
 				parseBlock();
 				//THIS MAY BE IN THE WRONG PLACE
 				myCSTree.climb();
+				myASTree.climb();
 			}
 		}
 
@@ -286,16 +308,21 @@ public class Parser {
 				}
 
 				if (continueParse) {
+					myASTree.addBranchNode("comparison");
 					parseExpression();
+					//myASTree.climb();
 					//myTree.climb();
 				}
 
 				if (continueParse) {
+					//myASTree.addBranchNode("comparison");
 					parseBoolOp();
+					//myASTree.climb();
 				}
 
 				if (continueParse) {
 					parseExpression();
+					myASTree.climb();
 				}
 
 				if (Lexer.getTokenArray().get(0).getType() == "rightParen") {
@@ -328,6 +355,7 @@ public class Parser {
 				if (continueParse) {
 					matchAndAnnihilate("boolOp");
 					myCSTree.climb();
+					//myASTree.climb();
 				}
 			} else {
 				matchAndAnnihilate("boolOp");
@@ -381,8 +409,12 @@ public class Parser {
 			if (continueParse) {
 				if (m.find()) {
 					if (parseCharList(m.group(1))) {
+						myASTree.addLeafNode(Lexer.getTokenArray().get(0).getValue());
 						matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
+						
+						
 						myCSTree.climb();
+						myASTree.climb();
 					} else {
 						System.out.println("ERROR IN YOUR STRING ");
 						continueParse = false;
@@ -474,7 +506,9 @@ public class Parser {
 
 		public static void parseIntExpression() {
 			if (continueParse) {
+				myASTree.addLeafNode(Lexer.getTokenArray().get(0).getValue());
 				matchAndAnnihilate("digit");
+				myASTree.climb();
 				myCSTree.climb();
 			}
 			if (Lexer.getTokenArray().get(0).getType() == "intOp" && continueParse) {
@@ -522,9 +556,9 @@ public class Parser {
 			if (continueParse) {
 				//myTree.addBranchNode("ID");
 				//System.out.println(myTree.getCurrItem().getData());
-				
+				myASTree.addLeafNode(Lexer.getTokenArray().get(0).getValue());
 				matchAndAnnihilate("alpha/ID");
-				myASTree.addLeafNode("alpha/ID");
+				
 				
 				myCSTree.climb();
 				myASTree.climb();
