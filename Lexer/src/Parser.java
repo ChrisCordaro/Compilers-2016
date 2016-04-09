@@ -41,10 +41,10 @@ public class Parser {
 			if (continueParse) {
 				//TreeNode root = new TreeNode("root");
 				myCSTree.addRootNode("goal");
-				myASTree.addRootNode("goal");
+				myASTree.addASTRootNode("goal");
 				System.out.println(myCSTree.getRoot().getData());
 				parseBlock();
-				//myTree.climb();
+				//myASTree.climb();
 				
 				
 			}
@@ -56,6 +56,7 @@ public class Parser {
 			if (continueParse) {
 				matchAndAnnihilate("endProgram");
 				myCSTree.climb();
+				
 				System.out.println("FINAL ROOT CHECK " + myCSTree.getRoot().getData());
 				//System.out.println("Children of root test: " + myTree.getRoot().getChildren().get(0));
 				System.out.println("Children of root ");
@@ -88,7 +89,7 @@ public class Parser {
 		public static void parseBlock() {
 			if (continueParse) {
 				myCSTree.addBranchNode("block");
-				myASTree.addBranchNode("block");
+				myASTree.addASTBranchNode("block");
 				
 				System.out.println(myCSTree.getCurrItem().getData());
 				matchAndAnnihilate("leftBrace");
@@ -176,7 +177,8 @@ public class Parser {
 			} else if (Lexer.getTokenArray().get(0).getType() == "leftBrace") {
 				//WHAT TO DO HERE
 				parseBlock();
-				myCSTree.climb();
+				//This climb() causes the issues of having the final right brace and EOP be a child of root
+				//myCSTree.climb();
 			}
 			//THIS CLIMB IS CAUSING ISSUES
 			//myTree.climb();
@@ -187,7 +189,7 @@ public class Parser {
 		public static void parsePrintStatement() {
 			if (continueParse) {
 				myCSTree.addBranchNode("printStatement");
-				myASTree.addBranchNode("print");
+				myASTree.addASTBranchNode("print");
 				
 				System.out.println(myCSTree.getCurrItem().getData());
 				
@@ -195,7 +197,7 @@ public class Parser {
 				//myASTree.addLeafNode("print");
 				
 				myCSTree.climb();
-				myASTree.climb();
+				//myASTree.climb();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("leftParen");
@@ -221,13 +223,15 @@ public class Parser {
 			if (continueParse) {
 				//may need another climb after making the branchNode
 				myCSTree.addBranchNode("assignmentStatement");
-				myASTree.addBranchNode("assignStatement");
+				myASTree.addASTBranchNode("assignStatement");
 				
 				System.out.println(myCSTree.getCurrItem().getData());
 				
-				matchAndAnnihilate("alpha/ID");
 				myASTree.addLeafNode("alpha/ID");
+				matchAndAnnihilate("alpha/ID");
+				
 				myCSTree.climb();
+				myASTree.climb();
 			}
 			if (Lexer.getTokenArray().get(0).getType() == "assign" && continueParse) {
 
@@ -252,7 +256,7 @@ public class Parser {
 		public static void parseIfStatement() {
 			if (continueParse) {
 				myCSTree.addBranchNode("ifStatement");
-				myASTree.addBranchNode("if");
+				myASTree.addASTBranchNode("if");
 				
 				System.out.println(myCSTree.getCurrItem().getData());
 				
@@ -308,7 +312,7 @@ public class Parser {
 				}
 
 				if (continueParse) {
-					myASTree.addBranchNode("comparison");
+					myASTree.addASTBranchNode("comparison");
 					parseExpression();
 					//myASTree.climb();
 					//myTree.climb();
@@ -536,18 +540,19 @@ public class Parser {
 		public static void parseVarDecl() {
 			if (continueParse) {
 				myCSTree.addBranchNode("varDecl");
-				myASTree.addBranchNode("varDecl");
+				myASTree.addASTBranchNode("varDecl");
 				
 				System.out.println(myCSTree.getCurrItem().getData());
 				
-				matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
 				myASTree.addLeafNode(Lexer.getTokenArray().get(0).getType());
+				matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
+				
 				
 				myCSTree.climb();
 				myASTree.climb();
 				
 				parseID();
-				//myTree.climb();
+				myASTree.climb();
 			}
 			
 		}

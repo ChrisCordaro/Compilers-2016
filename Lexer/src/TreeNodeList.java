@@ -39,6 +39,20 @@ public class TreeNodeList {
 		System.out.println("Here's your root " + root.getData());
 
 	}
+	
+	public void addASTRootNode(String data) {
+		TreeNode rootNode = new TreeNode(data);
+		// root = rootNode;
+		// root.setData(data);
+		// currItem = rootNode;
+		this.root = rootNode;
+		this.currItem = rootNode;
+		// setRoot(rootNode);
+		// setCurrItem(rootNode);
+		System.out.println("Create root node of " + data);
+		System.out.println("Here's your root " + root.getData());
+
+	}
 
 	public void addBranchNode(String data) {
 		// check if root
@@ -58,6 +72,29 @@ public class TreeNodeList {
 		// node.getParent().getChildren().add(node);
 		System.out.println("Creating BRANCH of " + data);
 		System.out.println("His parent is " + node.getParent().getData());
+		// System.out.println("CurrItem Test " + currItem.getData());
+		// System.out.println("ROOT TEST " + root.getData());
+
+	}
+	
+	public void addASTBranchNode(String data) {
+		// check if root
+		// if not make child node
+		// assign our parent
+		// put ourselves in parent.children
+
+		TreeNode node = new TreeNode(data);
+		// TreeNode temp = currItem;
+
+		// node.setParent(temp);
+		// currItem = node;
+
+		node.setParent(this.currItem);
+		this.currItem.setChildren(node);
+		this.setCurrItem(node);
+		// node.getParent().getChildren().add(node);
+		//System.out.println("Creating BRANCH of " + data);
+		//System.out.println("His parent is " + node.getParent().getData());
 		// System.out.println("CurrItem Test " + currItem.getData());
 		// System.out.println("ROOT TEST " + root.getData());
 

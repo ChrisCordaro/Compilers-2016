@@ -59,29 +59,34 @@ public class Lexer {
 		// Alter file path to
 		// FileInputStream fileInput = new
 		// FileInputStream("C:/Users/Chris/Desktop/test.txt");
+		String filename;
+		Scanner scanScan = new Scanner(System.in);
+		if(args[0] != null){
+			filename = args[0];
+		}else{
+			System.out.print("Input file directory:");
+			filename = scanScan.nextLine();
+		}
 		
-		
-		Scanner Scanscan = new Scanner(System.in);
-		System.out.print("Input file directory:");
-		String filename = Scanscan.nextLine();
 		FileInputStream inputFile = new FileInputStream(filename);
 		Scanner reader = new Scanner(inputFile);
-
-		
-		System.out.println("Would you like to enjoy verbose mode? Please enter capital(Y/N)");
-		Scanner verboseScanner = new Scanner(System.in);
-		String input = verboseScanner.next();
-		String[] a = new String[2];
-		a[0] = "Y";
-		a[1] = "N";
-		if (a[0].equals(input)) {
-			System.out.println("GOOOODD CHOICE");
-			verbose = true;
-		}else if(a[1].equals(input)){
-			System.out.println("BAAADDD CHOICE");
+		String verboseCheck = "";
+		if(args[1] != null){System.out.println("NUGGERS" + args[1]);
+			if(args[1] == "Y" || args[1] == "N" || args[1] == "y" || args[1] == "n"){
+				verboseCheck = args[1];
+			}
 		}else{
-			System.out.println("INVALID INPUT DEFAULTING TO NO");
+			System.out.println("Would you like to enjoy verbose mode? Please enter capital(Y/N)");
+			String input = scanScan.next();
+			verboseCheck = input;
 		}
+
+		if(verboseCheck == "Y" || verboseCheck == "y"){
+			verbose = true;
+		}else if(verboseCheck == "N" || verboseCheck == "n"){
+			verbose = false;
+		}
+		
 		
 
 		ArrayList<Character> charArray = new ArrayList<Character>();
