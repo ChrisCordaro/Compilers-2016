@@ -73,6 +73,25 @@ public class Parser {
 				System.out.println("AST children test");
 				//I THINK THIS WORKS?
 				myASTree.printChildren(myASTree.getRoot().getChildren());
+				
+				/*System.out.println("");
+				System.out.println("::::::::::::::");
+				System.out.println("CST children test");
+				myCSTree.printChildren(myCSTree.getRoot().getChildren());
+				System.out.println("");*/
+				
+				
+				//print cst
+				System.out.println("PRINTING CST");
+				System.out.println("::::::::::::");
+				myCSTree.getRoot().print("",true);
+				System.out.println("");
+				
+				//print ast
+				System.out.println("PRINTING AST");
+				System.out.println("::::::::::::");
+				myASTree.getRoot().print("",true);
+				
 			}
 
 			if (!Lexer.getTokenArray().isEmpty() && continueParse) {
@@ -101,7 +120,7 @@ public class Parser {
 			}
 			if (continueParse) {
 				parseStatementList();
-				//myTree.climb();
+				//myASTree.climb();
 			}
 			if (continueParse) {
 				matchAndAnnihilate("rightBrace");
@@ -207,7 +226,9 @@ public class Parser {
 				myCSTree.addBranchNode("expression");
 				System.out.println(myCSTree.getCurrItem().getData());
 				parseExpression();
+				myASTree.climb();
 				myCSTree.climb();
+				
 				// parseBoolOp();
 				// parseExpression();
 			}
@@ -215,6 +236,8 @@ public class Parser {
 				matchAndAnnihilate("rightParen");
 				myCSTree.climb();
 			}
+			
+			myASTree.climb();
 
 		}
 
@@ -247,7 +270,7 @@ public class Parser {
 
 			if (continueParse) {
 				parseExpression();
-				//myTree.climb();
+				myASTree.climb();
 			}
 
 		}
