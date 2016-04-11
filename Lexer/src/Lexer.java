@@ -71,7 +71,7 @@ public class Lexer {
 		FileInputStream inputFile = new FileInputStream(filename);
 		Scanner reader = new Scanner(inputFile);
 		String verboseCheck = "";
-		if(args[1] != null){System.out.println("NUGGERS" + args[1]);
+		if(args[1] != null){System.out.println("" + args[1]);
 			if(args[1] == "Y" || args[1] == "N" || args[1] == "y" || args[1] == "n"){
 				verboseCheck = args[1];
 			}
@@ -185,7 +185,7 @@ public class Lexer {
 			}
 
 			if (x.get(i) == '\n') {
-				System.out.println("ON LINE " + counter);
+				//System.out.println("ON LINE " + counter);
 
 				counter++;
 				// intArray.add(x.get(i));
