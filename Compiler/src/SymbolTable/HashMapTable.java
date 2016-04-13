@@ -38,17 +38,14 @@ public class HashMapTable {
 
 	public static void scopeAST(TreeNode astNode) {
 		Iterator iter = astNode.getChildren().iterator();
-		// System.out.println(astNode.getData());
-		// System.out.println(astNode.getChildren().toString());
 
-		/// System.out.println( ": " + astNode.getData());
 		if (astNode.getData() == "block") {
 			// Create new scope
 			System.out.println("New Block/Scope");
 			HashMap hm = new HashMap();
 			hashArray.add(hm);
 			scopeCounter = scopeCounter + 1;
-			// System.out.println("ScopeCounter: " + scopeCounter);
+
 		} else if (astNode.getData() == "varDecl") {
 			// add to previously created scope
 			System.out.println(astNode.getData());
@@ -100,70 +97,36 @@ public class HashMapTable {
 					}
 				}
 			} else {
+				// Variable not declared in the current scope, so check if it
+				// has been previously declared
 				findVariableInOtherScope(astNode, 0);
-				// Check parent scopes
-				// Still need to figure out what to do if its not found
 
-				// System.out.println("Assign Statment");
-
-				// print statement
 			}
 		} else if (astNode.getData() == "print") {
-			if (hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(0).getData())) {
-				System.out.println(hashArray.get(scopeCounter - 1));
-				System.out.println((astNode.getChildren().get(0).getData()));
-				System.out.println("Print variable found in current scope");
-				// System.out.println(astNode.getChildren().get(1).getData());
-			} else if (astNode.getChildren().size() > 1) {
-				// more than one thing inside the print expression. Meaning that
-				// it's attempting to print(7+x)
-				System.out.println("MORE THAN ONE VAR IN PRINT STATEMENT");
+			// no type checking on print if it contains one element being
+			// printed
+			checkType(astNode.getChildren().get(0).getData());
+			if (astNode.getChildren().size() == 1) {
+
+				if (checkKeyInCurrScope(scopeCounter - 1, astNode)) {
+					System.out.println("VARIABLE FOUND IN CURRENT SCOPE");
+
+				} else if (astNode.getChildren().get(0).getData().matches("(\\d)")) {
+					System.out.println("PRINTING INT LITERAL");
+				} else if (astNode.getChildren().get(0).getData().matches("(\"([^\"]*)\")")) {
+					System.out.println("PRINTING STRING LITERAL");
+				} else if (astNode.getChildren().get(0).getData().matches("(true)")
+						|| astNode.getChildren().get(0).getData().matches("(false)")) {
+					System.out.println("PRINTING BOOLEAN LITERAL");
+				} else {
+					// Variable not found in current scope and is not a literal
+					// type, check previous scopes
+					findPrintVariableInOtherScope(astNode, 0);
+				}
+
 			} else {
-				System.out.println(hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(0).getData()));
-				System.out.println("print statement");
-				// print can take any type so there's no need to type check
-				// still check the scope, of course
-				// May want to put this is in a method but I'm not sure how to
-				// reference the astNode as it is recursively called within this
-				// method itself
-				boolean found = false;
-				System.out.println("Variable " + "'" + astNode.getChildren().get(0).getData() + "'"
-						+ " not declared in given scope. Checking parent scopes");
-				for (int i = 0; i < scopeCounter - 1; i++) {
-					if (hashArray.get(i).containsKey(astNode.getChildren().get(0).getData())) {
-						System.out.println("FOUND IT IN SCOPE " + (i + 1));
-						found = true;
-
-						// check now == intWord
-						System.out.println(astNode.getChildren().get(1).getData());// 3
-
-						checkType(astNode.getChildren().get(1).getData());// 3
-																			// is
-																			// an
-																			// int
-						System.out.println(check);// intWord
-						// a is being assigned to an int
-						// check that a was declared as an int
-
-						System.out.println(astNode.getChildren().get(0).getData());
-						// System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
-						if (hashArray.get(i).get(astNode.getChildren().get(0).getData()) == check) {
-							System.out.println("TYPE MATCH ON DIFFERENT SCOPED VARIABLES :)");
-						} else {
-							System.out.println("ERROR: TYPE MISMATCH ON DIFFERENT SCOPED VARIABLES");
-						}
-						varSetTo = astNode.getChildren().get(1).getData();
-
-						// System.out.println(hashArray.get(i));
-						// System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
-
-						break;
-					}
-					// handles while and if
-				}
-				if (found == false) {
-					System.out.println("ERROR: VARIABLE NEVER DECLARED");
-				}
+				//more than one variable in a print statement 
+				//iterate through the children of print and find the variables and string literals
 			}
 		} else if (astNode.getData() == "comparison") {
 
@@ -220,11 +183,14 @@ public class HashMapTable {
 
 		} else if (astNode.getData().equals("+")) {
 			System.out.println("FOUND AN ADDITION");
-			// check to make sure that the value to the left and the right of
+			// check to make sure that the value to the left and the right
+			// of
 			// the + sign are ints
 		}
 
-		while (iter.hasNext()) {
+		while (iter.hasNext())
+
+		{
 
 			scopeAST((TreeNode) iter.next());
 		}
@@ -239,6 +205,7 @@ public class HashMapTable {
 		}
 	}
 
+	// Checks what type the variable is assigned to
 	public static int assignTypeCheck(TreeNode t, int child) {
 		if (t.getChildren().get(child).getData().startsWith("\"")) {
 			return 1;
@@ -253,6 +220,8 @@ public class HashMapTable {
 		}
 	}
 
+	// Compares the type that the variable is being set to, to the type the
+	// variable is declared
 	public static boolean compareType(TreeNode t, int child, String type) {
 		if (hashArray.get(scopeCounter - 1).get(t.getChildren().get(child).getData()) == type) {
 			return true;
@@ -266,9 +235,9 @@ public class HashMapTable {
 			check = "stringWord";
 		} else if (x.startsWith("t") || x.startsWith("f")) {
 			check = "booleanWord";
-		} else {
+		} else
 			check = "intWord";
-		}
+
 	}
 
 	public static void findVariableInOtherScope(TreeNode t, int child) {
@@ -308,6 +277,56 @@ public class HashMapTable {
 
 				break;
 			}
+		}
+		if (found == false) {
+			System.out.println("VARIABLE NOT FOUND ERROR");
+		}
+	}
+
+	public static void findPrintVariableInOtherScope(TreeNode t, int child) {
+		boolean found = false;
+		String declaredVarType;
+		System.out.println("Variable " + "'" + t.getChildren().get(child).getData() + "'"
+				+ " not declared in given scope. Checking parent scopes");
+		for (int i = 0; i < scopeCounter - 1; i++) {
+			if (hashArray.get(i).containsKey(t.getChildren().get(child).getData())) {
+				System.out.println("FOUND VARIABLE DECLARATION IN SCOPE " + (i + 1));
+				found = true;
+
+				/*
+				 * check now == intWord
+				 * System.out.println(t.getChildren().get(child).getData());// a
+				 * declaredVarType = (String)
+				 * hashArray.get(i).get(t.getChildren().get(child).getData());
+				 * System.out.println("declared variable is of type " +
+				 * declaredVarType);
+				 * 
+				 * System.out.println(hashArray.get(i).get(t.getChildren().get(
+				 * child).getData()));
+				 * 
+				 * //checkType(t.getChildren().get(child).getData());// 3 // is
+				 * // an // int //System.out.println(check);// intWord // a is
+				 * being assigned to an int // check that a was declared as an
+				 * int
+				 * 
+				 * System.out.println(t.getChildren().get(child).getData()); //
+				 * System.out.println(hashArray.get(i).get(astNode.getChildren()
+				 * .get(0).getData())); if
+				 * (hashArray.get(i).get(t.getChildren().get(child).getData())
+				 * == check) { System.out.println(
+				 * "TYPE MATCH ON DIFFERENT SCOPED VARIABLES :)"); } else {
+				 * System.out.println(
+				 * "ERROR: TYPE MISMATCH ON DIFFERENT SCOPED VARIABLES"); }
+				 * //varSetTo = t.getChildren().get(child).getData();
+				 * 
+				 * // System.out.println(hashArray.get(i)); //
+				 * System.out.println(hashArray.get(i).get(astNode.getChildren()
+				 * .get(0).getData()));
+				 * 
+				 * break; }
+				 */
+			}
+
 		}
 		if (found == false) {
 			System.out.println("VARIABLE NOT FOUND ERROR");
