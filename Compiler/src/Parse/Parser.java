@@ -140,7 +140,10 @@ public class Parser {
 			// myASTree.climb();
 		}
 		if (continueParse) {
+			//myASTree.addLeafNode("endBlock");
 			matchAndAnnihilate("rightBrace");
+			
+			myASTree.climb();
 			myCSTree.climb();
 		}
 

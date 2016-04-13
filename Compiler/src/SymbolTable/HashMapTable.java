@@ -17,6 +17,10 @@ public class HashMapTable {
 	private static ArrayList<HashMap> hashArray = new ArrayList();
 	private static int scopeCounter = 0;
 
+	private static String varSetTo;
+	private static String varType;
+	private static String check;
+
 	public void HashMap() {
 		TreeNodeList AST = Parser.getAST();
 		HashMap myHashMap = new HashMap();
@@ -62,7 +66,7 @@ public class HashMapTable {
 			if (hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(0).getData())) {
 				System.out.println("Declared");
 				if (astNode.getChildren().get(1).getData().startsWith("\"")) {
-					System.out.println("Type String");
+					System.out.println("Variable set to a string");
 					// Verify type compatible
 					// get returns the value of a given key so given the example
 					// string a
@@ -76,34 +80,190 @@ public class HashMapTable {
 
 				} else if (astNode.getChildren().get(1).getData().startsWith("t")
 						|| astNode.getChildren().get(1).getData().startsWith("f")) {
-					System.out.println("Varibale declared as a boolean");
-					
+					System.out.println("Varibale set to a boolean");
+
 					if (hashArray.get(scopeCounter - 1).get(astNode.getChildren().get(0).getData()) == "booleanWord") {
 						System.out.println("TYPE COMPATIBLE BOOLEAN VARIABLE !");
+					} else {
+						System.out.println("Type error :c ");
+					}
+				} else {
+					// variable is assigned to an int
+					// we know this because if it isn't a string or a boolean it
+					// can only be an int. If it were something else the parser
+					// would have caught it
+					System.out.println("Variable declared as an int");
+					if (hashArray.get(scopeCounter - 1).get(astNode.getChildren().get(0).getData()) == "intWord") {
+						System.out.println("TYPE COMPATIBLE INT VARIABLE !");
 					} else {
 						System.out.println("Type error :c ");
 					}
 				}
 			} else {
 				// Check parent scopes
-				System.out.println("Variable not declared in given scope. Checking parent scopes");
+				// Still need to figure out what to do if its not found
+				boolean found = false;
+				System.out.println("Variable " + "'" + astNode.getChildren().get(0).getData() + "'"
+						+ " not declared in given scope. Checking parent scopes");
+				for (int i = 0; i < scopeCounter - 1; i++) {
+					if (hashArray.get(i).containsKey(astNode.getChildren().get(0).getData())) {
+						System.out.println("FOUND IT IN SCOPE " + (i + 1));
+						found = true;
+						
+						//check now == intWord
+						System.out.println(astNode.getChildren().get(1).getData());//3
+						
+						checkType(astNode.getChildren().get(1).getData());//3 is an int
+						System.out.println(check);//intWord
+						//a is being assigned to an int
+						//check that a was declared as an int
+						
+						System.out.println(astNode.getChildren().get(0).getData());
+						//System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
+						if(hashArray.get(i).get(astNode.getChildren().get(0).getData()) == check){
+							System.out.println("TYPE MATCH ON DIFFERENT SCOPED VARIABLES :)");
+						}else{
+							System.out.println("ERROR: TYPE MISMATCH ON DIFFERENT SCOPED VARIABLES");
+						}
+						varSetTo = astNode.getChildren().get(1).getData();
+					
+				
+
+					
+						//System.out.println(hashArray.get(i));
+						//System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
+						
+					
+					
+
+						break;
+					}
+				}
+				if (found == false) {
+					System.out.println("VARIABLE NOT FOUND ERROR");
+				}
 			}
 
-			System.out.println("Assign Statment");
+			//System.out.println("Assign Statment");
+
+			// print statement
+		} else if (astNode.getData() == "print") {
+			if (hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(0).getData())) {
+				System.out.println("Print variable found in current scope");
+			} else {
+				System.out.println("print statement");
+				// print can take any type so there's no need to type check
+				// still check the scope, of course
+				// May want to put this is in a method but I'm not sure how to
+				// reference the astNode as it is recursively called within this
+				// method itself
+				boolean found = false;
+				for (int i = 0; i < scopeCounter - 1; i++) {
+					if (hashArray.get(i).containsKey(astNode.getChildren().get(0).getData())) {
+						System.out.println("FOUND PRINT VARIABLE IN SCOPE " + (i + 1));
+						found = true;
+
+						break;
+					}
+				}
+				if (found == false) {
+					System.out.println("VARIABLE NOT FOUND ERROR");
+				}
+			}
+			// handles while and if
+		} else if (astNode.getData() == "comparison") {
+
+			if (hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(0).getData())) {
+				System.out.println("Comparison variable found in current scope");// Variable
+																					// found
+																					// in
+																					// currScope
+			} else {
+				/*
+				 * for example of: {int b{if(b == false)}}
+				 */
+				boolean found = false;
+				System.out.println("Variable " + "'" + astNode.getChildren().get(0).getData() + "'"
+						+ " not declared in given scope. Checking parent scopes");
+				for (int i = 0; i < scopeCounter - 1; i++) {
+					if (hashArray.get(i).containsKey(astNode.getChildren().get(0).getData())) {
+						System.out.println("FOUND IT IN SCOPE " + (i + 1));
+						found = true;
+						
+						//check now == intWord
+						System.out.println(astNode.getChildren().get(1).getData());//false
+						
+						checkType(astNode.getChildren().get(1).getData());//false is a booleanWord
+						System.out.println(check);//booleanWord
+						//a is being assigned to an booleanWord
+						//check that a was declared as an boolean
+						
+						System.out.println(astNode.getChildren().get(0).getData());
+						System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));//declared as int word
+						if(hashArray.get(i).get(astNode.getChildren().get(0).getData()) == check){
+							System.out.println("TYPE MATCH ON DIFFERENT SCOPED VARIABLES :)");
+						}else{
+							System.out.println("ERROR: TYPE MISMATCH ON DIFFERENT SCOPED VARIABLES");
+						}
+						varSetTo = astNode.getChildren().get(1).getData();
+					
+				
+
+					
+						//System.out.println(hashArray.get(i));
+						//System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
+						
+					
+					
+
+						break;
+					}
+				}
+				if (found == false) {
+					System.out.println("VARIABLE NOT FOUND ERROR");
+				}
+			}
+
+
 		}
 
 		while (iter.hasNext()) {
 			scopeAST((TreeNode) iter.next());
 		}
 
-		// System.out.println(" " + astRoot.getData());
-		// scopeCheckList.add(astRoot.getData());
+	}
+	
+	public static void checkType(String x){
+		if (x.startsWith("\"")) {
+			check = "stringWord";
+		} else	if (x.startsWith("t") || x.startsWith("f")) {
+			check = "booleanWord";
+		}else{
+			check = "intWord";
+		}
+	}
+
+	public static boolean checkDifScopeVarTypes(String c, String varType) {
+		c = check;
+		if(check == varType){
+			return true;
+		}else{
+			return false;
+		}
 		/*
-		 * Iterator iter = astNode.getChildren().iterator(); while
-		 * (iter.hasNext()) {
-		 * 
-		 * verticlePrintAst((TreeNode) iter.next()); }
-		 */
+		
+		if (setTo.startsWith("\"")) {
+			check = "string";
+		} else	if (setTo.startsWith("t") || setTo.startsWith("f")) {
+			check = "boolean";
+		}else{
+			check = "int";
+		}
+		if(check == varType){
+			return true;
+		}else{
+			return false;
+		}*/
 	}
 
 	public void printHashArray(ArrayList<HashMap> hash) {
