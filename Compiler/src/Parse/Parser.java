@@ -10,6 +10,7 @@ public class Parser {
 	private static boolean continueParse = true;
 	private static TreeNodeList myCSTree = new TreeNodeList();
 	private static TreeNodeList myASTree = new TreeNodeList();
+	private static int blockNum = 1;
 
 	private static HashMapTable myHMT = new HashMapTable();
 	
@@ -125,7 +126,8 @@ public class Parser {
 	public static void parseBlock() {
 		if (continueParse) {
 			myCSTree.addBranchNode("block");
-			myASTree.addASTBranchNode("block");
+			myASTree.addASTBranchNode("block"+blockNum);
+			blockNum ++;
 
 			System.out.println(myCSTree.getCurrItem().getData());
 			matchAndAnnihilate("leftBrace");
@@ -269,6 +271,7 @@ public class Parser {
 		if (continueParse) {
 			myCSTree.addBranchNode("expression");
 			System.out.println(myCSTree.getCurrItem().getData());
+			///this still allows print(007) without quotes
 			parseExpression();
 			myASTree.climb();
 			myCSTree.climb();
@@ -358,6 +361,7 @@ public class Parser {
 			parseBlock();
 
 			myCSTree.climb();
+			myASTree.climb();
 		}
 	}
 

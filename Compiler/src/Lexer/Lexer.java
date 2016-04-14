@@ -34,7 +34,9 @@ public class Lexer {
 	private static String rightBrace = "(\\})";
 	private static String quote = "(\")";
 	// make string not accept captial letters
-	private static String string = "(\"([^\"]*)\")";
+	//private static String string = "(\"([^\"]*)\")";
+	private static String string = "(\"([a-z\\s]*)\")";
+
 
 	private static String equality = "(==)";
 	private static String notEqual = "(!=)";
