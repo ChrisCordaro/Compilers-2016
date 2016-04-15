@@ -38,8 +38,8 @@ public class Parser {
 					"PARSED!: EXPECTING " + expectedToken + " AND GOT " + Lexer.getTokenArray().get(0).getType());
 
 			System.out.println("Creating leaf node of " + expectedToken);
-			myCSTree.addLeafNode(expectedToken);
-			System.out.println("Leaf Node Parent Test " + myCSTree.getCurrItem().getParent().getData());
+			myCSTarray.get(counter).addLeafNode(expectedToken);
+			System.out.println("Leaf Node Parent Test " + myCSTarray.get(counter).getCurrItem().getParent().getData());
 
 			Lexer.getTokenArray().remove(0);
 
@@ -61,10 +61,11 @@ public class Parser {
 			TreeNodeList myCST = new TreeNodeList();
 			myCSTarray.add(myCST);
 			
-			myCSTree.addRootNode("goal");
+			myCSTarray.get(counter).addRootNode("goal");
+			//myCSTree.addRootNode("goal");
 			myASTarray.get(counter).addASTRootNode("goal");
 			//myASTree.addASTRootNode("goal");
-			System.out.println(myCSTree.getRoot().getData());
+			System.out.println(myCSTarray.get(counter).getRoot().getData());
 			parseBlock();
 			
 			// myASTree.climb();
@@ -77,16 +78,16 @@ public class Parser {
 		 */
 		if (continueParse) {
 			matchAndAnnihilate("endProgram");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 
-			System.out.println("FINAL ROOT CHECK " + myCSTree.getRoot().getData());
+			System.out.println("FINAL ROOT CHECK " + myCSTarray.get(counter).getRoot().getData());
 			// System.out.println("Children of root test: " +
 			// myTree.getRoot().getChildren().get(0));
 			System.out.println("Children of root ");
-			myCSTree.rootChildren();
+			myCSTarray.get(counter).rootChildren();
 			System.out.println("Children of Main Block: ");
 
-			myCSTree.blockChildren();
+			myCSTarray.get(counter).blockChildren();
 
 			System.out.println("::::::::::::::::");
 			System.out.println("AST");
@@ -105,13 +106,16 @@ public class Parser {
 			 */
 
 			// print cst
-			System.out.println("PRINTING CST");
+			System.out.println("PRINTING CST(S)");
 			System.out.println("::::::::::::");
-			myCSTree.getRoot().print("", true);
-			System.out.println("");
+			for(int i = 0; i < myCSTarray.size(); i ++){
+				System.out.println("Print CST number: " + i);
+				myCSTarray.get(counter).getRoot().print("", true);
+				System.out.println("");
+			}
 
 			// print ast
-			System.out.println("PRINTING AST");
+			System.out.println("PRINTING AST(S)");
 			System.out.println("::::::::::::");
 			for(int i = 0; i < myASTarray.size(); i++){
 				System.out.println("Printing AST number: " + i);
@@ -125,7 +129,7 @@ public class Parser {
 			System.out.println();
 			//myHMT.scopeCheckAnalyze(myHMT.getScopeCheckList());
 			for(int i = 0; i < myASTarray.size(); i++){
-				System.out.println("-----START----------");
+				System.out.println("-----START ANALYSIS FOR SYMBOT TABLE " + i + "----------");
 				myHMT.scopeAST(myASTarray.get(i).getRoot());
 					System.out.println("------END---------");
 					System.out.println("");
@@ -150,16 +154,16 @@ public class Parser {
 	// Might have to remove the token instead of using a parseIndex
 	public static void parseBlock() {
 		if (continueParse) {
-			myCSTree.addBranchNode("block");
+			myCSTarray.get(counter).addBranchNode("block");
 			//System.out.println(blockNum);
 			myASTarray.get(counter).addASTBranchNode("block"+blockNum);
 			blockNum ++;
 
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			matchAndAnnihilate("leftBrace");
 			// myASTree.addLeafNode("leftBraces");
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			// myASTree.climb();
 
 		}
@@ -172,7 +176,7 @@ public class Parser {
 			matchAndAnnihilate("rightBrace");
 			
 			myASTarray.get(counter).climb();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		}
 
 		// parseProgram();
@@ -202,13 +206,13 @@ public class Parser {
 				|| Lexer.getTokenArray().get(0).getType() == "whileWord"
 				|| Lexer.getTokenArray().get(0).getType() == "leftBrace") {
 
-			myCSTree.addBranchNode("statementList");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statementList");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			if (continueParse) {
 				parseStatementList();
-				myCSTree.climb();
+				myCSTarray.get(counter).climb();
 			}
 		} else {
 			// comment
@@ -221,30 +225,30 @@ public class Parser {
 		if (Lexer.getTokenArray().get(0).getType() == "intWord"
 				|| Lexer.getTokenArray().get(0).getType() == "stringWord"
 				|| Lexer.getTokenArray().get(0).getType() == "booleanWord") {
-			myCSTree.addBranchNode("statement");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statement");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseVarDecl();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "printWord") {
-			myCSTree.addBranchNode("statement");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statement");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parsePrintStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "alpha/ID") {
-			myCSTree.addBranchNode("statement");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statement");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseAssignmentStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "ifWord") {
-			myCSTree.addBranchNode("statement");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statement");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseIfStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "whileWord") {
-			myCSTree.addBranchNode("statement");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("statement");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseWhileStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "leftBrace") {
 			// WHAT TO DO HERE
 			parseBlock();
@@ -259,15 +263,15 @@ public class Parser {
 
 	public static void parseVarDecl() {
 		if (continueParse) {
-			myCSTree.addBranchNode("varDecl");
+			myCSTarray.get(counter).addBranchNode("varDecl");
 			myASTarray.get(counter).addASTBranchNode("varDecl");
 
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getType());
 			matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			myASTarray.get(counter).climb();
 
 			parseID();
@@ -279,35 +283,35 @@ public class Parser {
 	// print statement is a print followed by ( expr )
 	public static void parsePrintStatement() {
 		if (continueParse) {
-			myCSTree.addBranchNode("printStatement");
+			myCSTarray.get(counter).addBranchNode("printStatement");
 			myASTarray.get(counter).addASTBranchNode("print");
 
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 
 			matchAndAnnihilate("printWord");
 			// myASTree.addLeafNode("print");
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			// myASTree.climb();
 		}
 		if (continueParse) {
 			matchAndAnnihilate("leftParen");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		}
 		if (continueParse) {
-			myCSTree.addBranchNode("expression");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("expression");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			///this still allows print(007) without quotes
 			parseExpression();
 			myASTarray.get(counter).climb();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 
 			// parseBoolOp();
 			// parseExpression();
 		}
 		if (continueParse) {
 			matchAndAnnihilate("rightParen");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		}
 
 		myASTarray.get(counter).climb();
@@ -318,26 +322,26 @@ public class Parser {
 	public static void parseAssignmentStatement() {
 		if (continueParse) {
 			// may need another climb after making the branchNode
-			myCSTree.addBranchNode("assignmentStatement");
+			myCSTarray.get(counter).addBranchNode("assignmentStatement");
 			myASTarray.get(counter).addASTBranchNode("assignStatement");
 
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate("alpha/ID");
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			myASTarray.get(counter).climb();
 		}
 		if (Lexer.getTokenArray().get(0).getType() == "assign" && continueParse) {
 
 			matchAndAnnihilate("assign");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 
 		} else {
 			if (continueParse) {
 				matchAndAnnihilate("assign");
-				myCSTree.climb();
+				myCSTarray.get(counter).climb();
 			}
 		}
 
@@ -351,14 +355,14 @@ public class Parser {
 	// If statements consist of if booleanExpr block
 	public static void parseIfStatement() {
 		if (continueParse) {
-			myCSTree.addBranchNode("ifStatement");
+			myCSTarray.get(counter).addBranchNode("ifStatement");
 			myASTarray.get(counter).addASTBranchNode("if");
 
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 
 			matchAndAnnihilate("ifWord");
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			// myASTree.climb();
 
 			parseBoolExpression();
@@ -369,24 +373,24 @@ public class Parser {
 			 */
 			parseBlock();
 			// THIS MAY BE IN THE WRONG PLACE
-			myCSTree.climb();
+			myCSTarray.get(0).climb();
 			myASTarray.get(counter).climb();
 		}
 	}
 
 	public static void parseWhileStatement() {
 		if (continueParse) {
-			myCSTree.addBranchNode("whileStatement");
+			myCSTarray.get(counter).addBranchNode("whileStatement");
 			myASTarray.get(counter).addASTBranchNode(Lexer.getTokenArray().get(0).getValue());
-			System.out.println(myCSTree.getCurrItem().getData());
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			matchAndAnnihilate("whileWord");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 
 			parseBoolExpression();
 
 			parseBlock();
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			myASTarray.get(counter).climb();
 		}
 	}
@@ -396,12 +400,12 @@ public class Parser {
 		if (Lexer.getTokenArray().get(0).getType() == "true" || Lexer.getTokenArray().get(0).getType() == "false") {
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else {
 			if (Lexer.getTokenArray().get(0).getType() == "leftParen") {
 				if (continueParse) {
 					matchAndAnnihilate("leftParen");
-					myCSTree.climb();
+					myCSTarray.get(counter).climb();
 				}
 			} else {
 				continueParse = false;
@@ -431,7 +435,7 @@ public class Parser {
 			if (Lexer.getTokenArray().get(0).getType() == "rightParen") {
 				if (continueParse) {
 					matchAndAnnihilate("rightParen");
-					myCSTree.climb();
+					myCSTarray.get(counter).climb();
 				}
 			}
 		}
@@ -457,7 +461,7 @@ public class Parser {
 		if (Lexer.getTokenArray().get(0).getType() == "boolOp") {
 			if (continueParse) {
 				matchAndAnnihilate("boolOp");
-				myCSTree.climb();
+				myCSTarray.get(counter).climb();
 				// myASTree.climb();
 			}
 		} else {
@@ -470,32 +474,32 @@ public class Parser {
 	// NOT WORRYING ABOUT STRINGS AT THE MOMENT..
 	public static void parseExpression() {
 		if (Lexer.getTokenArray().get(0).getType() == "digit") {
-			myCSTree.addBranchNode("intExpression");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("intExpression");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseIntExpression();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "true" || Lexer.getTokenArray().get(0).getType() == "false"
 				|| Lexer.getTokenArray().get(0).getType() == "leftParen") {
-			myCSTree.addBranchNode("boolExpression");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("boolExpression");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseBoolExpression();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "alpha/ID") {
-			myCSTree.addBranchNode("ID");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("ID");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseID();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "ifWord") {
 			// does the grammar allow for an if inside a print
-			myCSTree.addBranchNode("ifExpression");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("ifExpression");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseIfStatement();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else if (Lexer.getTokenArray().get(0).getType() == "string") {
-			myCSTree.addBranchNode("stringExpression");
-			System.out.println(myCSTree.getCurrItem().getData());
+			myCSTarray.get(counter).addBranchNode("stringExpression");
+			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			parseStringExpression();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 		} else {
 			// System.out.println("BIG ERROR");
 			// continueParse = false;
@@ -504,11 +508,16 @@ public class Parser {
 	}
 
 	public static void parseIntExpression() {
-		if (continueParse) {
+		if (continueParse && (Lexer.getTokenArray().get(1).getType()!= "intOp")) {
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate("digit");
 			myASTarray.get(counter).climb();
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
+		}else if(continueParse && (Lexer.getTokenArray().get(1).getType()== "intOp")){
+			myASTarray.get(counter).addASTBranchNode(Lexer.getTokenArray().get(0).getValue());
+			matchAndAnnihilate("digit");
+			//myASTarray.get(counter).climb();
+			myCSTarray.get(counter).climb();
 		}
 		// How should the ast look for + operations
 		if (Lexer.getTokenArray().get(0).getType() == "intOp" && continueParse) {
@@ -516,7 +525,7 @@ public class Parser {
 			//myASTarray.get(counter).climb();
 			myASTarray.get(counter).addASTBranchNode("intExpr");
 			matchAndAnnihilate("intOp");
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			//myASTarray.get(counter).climb();
 			
 			if (continueParse) {
@@ -525,6 +534,7 @@ public class Parser {
 				// Not sure if needed
 				// myASTree.climb();
 			}
+			myASTarray.get(counter).climb();
 		}
 
 		
@@ -547,7 +557,7 @@ public class Parser {
 					myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 					matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
 
-					myCSTree.climb();
+					myCSTarray.get(counter).climb();
 					myASTarray.get(counter).climb();
 				} else {
 					System.out.println("ERROR IN YOUR STRING ");
@@ -655,7 +665,7 @@ public class Parser {
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate("alpha/ID");
 
-			myCSTree.climb();
+			myCSTarray.get(counter).climb();
 			myASTarray.get(counter).climb();
 		}
 

@@ -53,6 +53,8 @@ public class TreeNode {
 	
 	
 	   public void print(String prefix, boolean isTail) {
+		   //Please not this method was taken from Vasya Novikov on stackoverflow
+		   //URL: http://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
 	        System.out.println(prefix + (isTail ? "└── " : "├── ") + getData());
 	        for (int i = 0; i < children.size() - 1; i++) {
 	            children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
