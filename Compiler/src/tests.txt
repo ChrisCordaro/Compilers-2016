@@ -1,0 +1,4 @@
+{string a {a = 1+2+3+a}}$ --should report error on a type
+{int a {a = 1+2+3+a}}$ -- should pass on type/scope on both a's
+{int a{int b} int c}$-- int a and c are put in the same scope
+{string a if(a==1){int b}}$--will error on type checking of a
