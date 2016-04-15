@@ -14,6 +14,7 @@ public class HashMapTable {
 	private static HashMap myHashMap;
 	private static ArrayList<String> scopeCheckList = new ArrayList();
 
+//
 	private static ArrayList<HashMap> hashArray = new ArrayList();
 	private static int scopeCounter = 0;
 
@@ -25,6 +26,9 @@ public class HashMapTable {
 	public void HashMap() {
 		TreeNodeList AST = Parser.getAST();
 		HashMap myHashMap = new HashMap();
+	}
+	public void HashMapTable(){
+		
 	}
 
 	public static void verticlePrintAst(TreeNode astRoot) {
@@ -568,7 +572,7 @@ public class HashMapTable {
 	public static boolean addVarDeclToCorrectScope(TreeNode t) {
 
 		if (findParentBlock(t).equals("block" + scopeCounter)) {
-
+			System.out.println(scopeCounter);
 			hashArray.get(scopeCounter - 1).put(t.getChildren().get(1).getData(), t.getChildren().get(0).getData());
 			return true;
 		} else {
