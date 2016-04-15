@@ -105,6 +105,7 @@ public class Lexer {
 			charArray.add(c);
 
 		}
+	
 
 		testForSpace(charArray);
 		// System.out.println(analyzeList(charArray));

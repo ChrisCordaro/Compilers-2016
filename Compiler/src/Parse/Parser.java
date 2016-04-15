@@ -384,7 +384,8 @@ public class Parser {
 			}
 
 			if (continueParse) {
-				myASTree.addASTBranchNode("comparison");
+				//myASTree.addASTBranchNode("comparison");
+				myASTree.addASTBranchNode(Lexer.getTokenArray().get(1).getValue());
 				parseExpression();
 				// myASTree.climb();
 				// myTree.climb();

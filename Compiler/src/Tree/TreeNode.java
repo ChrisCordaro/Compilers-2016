@@ -24,6 +24,7 @@ public class TreeNode {
 
 	public String getData() {
 		return data;
+		
 	}
 
 	public void setData(String data) {
