@@ -24,11 +24,7 @@ public class Parser {
 	public static void Parser() {
 
 	}
-	// Let's try some parsing....maybe
-	/*
-	 * This is the basic idea but I'm not too sure how to actually go about
-	 * checking if there are correctly closed blockes
-	 */
+	
 
 	// Here is where you create a leaf node
 	public static void matchAndAnnihilate(String expectedToken) {
@@ -54,7 +50,7 @@ public class Parser {
 
 	public static void parseProgram() {
 		if (continueParse) {
-			// TreeNode root = new TreeNode("root");
+	
 			TreeNodeList myAST = new TreeNodeList();
 			myASTarray.add(myAST);
 			
@@ -62,27 +58,22 @@ public class Parser {
 			myCSTarray.add(myCST);
 			
 			myCSTarray.get(counter).addRootNode("goal");
-			//myCSTree.addRootNode("goal");
+			
 			myASTarray.get(counter).addASTRootNode("goal");
-			//myASTree.addASTRootNode("goal");
+			
 			System.out.println(myCSTarray.get(counter).getRoot().getData());
 			parseBlock();
 			
-			// myASTree.climb();
+			
 
 		}
-		/*
-		 * if(continueParse && !tokenArray.isEmpty()){
-		 * matchAndAnnihilate("endProgram"); }else if(tokenArray.isEmpty()){
-		 * System.out.println("NO END OF PROGRAM FOUND"); }
-		 */
+		
 		if (continueParse) {
 			matchAndAnnihilate("endProgram");
 			myCSTarray.get(counter).climb();
 
 			System.out.println("FINAL ROOT CHECK " + myCSTarray.get(counter).getRoot().getData());
-			// System.out.println("Children of root test: " +
-			// myTree.getRoot().getChildren().get(0));
+			
 			System.out.println("Children of root ");
 			myCSTarray.get(counter).rootChildren();
 			System.out.println("Children of Main Block: ");
@@ -95,15 +86,7 @@ public class Parser {
 			myASTarray.get(counter).blockChildren();
 
 			System.out.println("AST children test");
-			// I THINK THIS WORKS?
-			//myASTarray.get(counter).printChildren(myASTree.getRoot().getChildren());
-
-			/*
-			 * System.out.println(""); System.out.println("::::::::::::::");
-			 * System.out.println("CST children test");
-			 * myCSTree.printChildren(myCSTree.getRoot().getChildren());
-			 * System.out.println("");
-			 */
+			
 
 			// print cst
 			System.out.println("PRINTING CST(S)");
@@ -135,7 +118,10 @@ public class Parser {
 					System.out.println("");
 			}
 			for(int i = 0; i < myASTarray.size(); i ++){
+				System.out.println("Printing hash array for program: " + i);
+				System.out.println("");
 				myHMT.printHashArray(myHMT.getHashArray());
+				System.out.println("");
 			}
 
 		}

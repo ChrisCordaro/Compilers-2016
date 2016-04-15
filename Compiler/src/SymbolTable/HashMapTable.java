@@ -55,15 +55,15 @@ public class HashMapTable {
 		} else if (astNode.getData() == "varDecl") {
 			// add to previously created scope
 
-			System.out.println(astNode.getParent().getChildren().isEmpty());
-			System.out.println(astNode.getData());
+			// System.out.println(astNode.getParent().getChildren().isEmpty());
+			// System.out.println(astNode.getData());
 
-			System.out.println(scopeCounter);
-			System.out.println("FINDING PARENT BLOCK");
-			System.out.println(findParentBlock(astNode));
+			// System.out.println(scopeCounter);
+			// System.out.println("FINDING PARENT BLOCK");
+			// System.out.println(findParentBlock(astNode));
 			// add to scopeCounter-1 as scopeCounter is initialized to 0 and
 			// then is increased for each block
-			System.out.println("block" + scopeCounter);
+			// System.out.println("block" + scopeCounter);
 			// String test = "block"+scopeCounter;
 			if (hashArray.get(scopeCounter - 1).containsKey(astNode.getChildren().get(1).getData())) {
 				System.out.println("VARIABLE ALREADY DECLARED IN CUR SCOPE");
@@ -95,7 +95,7 @@ public class HashMapTable {
 
 			// Checks is variable assigned is in curr scope = scopeCounter -1
 			if (checkKeyInCurrScope(astNode, 0)) {
-				System.out.println("Declared");
+				System.out.println(astNode.getChildren().get(0).getData() + " declared in current scope");
 				if (assignTypeCheck(astNode, 1) == 1) {
 					System.out.println("Variable set to a string");
 					// Verify type compatible
@@ -124,7 +124,7 @@ public class HashMapTable {
 					// we know this because if it isn't a string or a boolean it
 					// can only be an int. If it were something else the parser
 					// would have caught it
-					System.out.println("Variable declared as an int");
+					System.out.println("Variable assigned to an int");
 					if (compareType(astNode, 0, "intWord")) {
 						System.out.println("TYPE COMPATIBLE INT VARIABLE !");
 					} else {
@@ -143,7 +143,7 @@ public class HashMapTable {
 			// no type checking on print if it contains one element being
 			// printed
 			checkType(astNode.getChildren().get(0).getData());
-			if (astNode.getChildren().size() == 1) {
+			if (astNode.getChildren().size() == 1 && (astNode.getChildren().get(0).getChildren().isEmpty())) {
 
 				if (checkKeyInCurrScope(astNode, 0)) {
 					System.out.println("VARIABLE FOUND IN CURRENT SCOPE");
@@ -158,9 +158,10 @@ public class HashMapTable {
 				} else {
 					// Variable not found in current scope and is not a literal
 					// type, check previous scopes
-					findPrintVariableInOtherScope(astNode, 0);
+					if (!astNode.getData().matches("\\d")) {
+						findPrintVariableInOtherScope(astNode, 0);
+					}
 				}
-
 			} else {
 				// more than one variable in a print statement
 				// iterate through the children of print and find the variables
@@ -170,16 +171,23 @@ public class HashMapTable {
 				// and the variable will always be at the end
 
 				System.out.println("You have more than one variable in the print statment");
-				printChildren(astNode.getChildren());
-				findLastChild(astNode.getChildren());
-
-				if (checkLastChildOfPrint(findLastChild(astNode.getChildren()))) {
+				//check if the last child is either an int variable or an int literal
+				// printChildren(astNode.getChildren());
+				findLastChild(astNode);
+				
+				if(hashArray.get(scopeCounter - 1).containsKey(findLastChild(astNode).getData())){
+				
+					System.out.println("Last var of print statement declared in current scope");
+				}else{
+					System.out.println("CHICKEN");
+				}
+				/* if (checkLastChildOfPrint(findLastChild(astNode.getChildren()))) {
 					System.out.println("Last variable has been previously declared and it is the correct scope :)");
 				} else if (checkLastChildOfPrintInOtherScope(findLastChild(astNode.getChildren())) == false) {
 					System.out.println(
 							"Last variable has NOT been previously declared and/or it is the incorrect type:(");
 
-				}
+				}*/
 
 			}
 		} else if (astNode.getData().equals("==") || astNode.getData().equals("!=")) {
@@ -275,7 +283,11 @@ public class HashMapTable {
 				// type check for int
 				if (hashArray.get(scopeCounter - 1).containsKey(t.getChildren().get(0).getData())) {
 					System.out.println("Variable found in curr scope");
+					if(hashArray.get(scopeCounter-1).get(t.getChildren().get(0).getData()) == "intWord"){
+						System.out.println("Variable type of int :)");
+					}
 				} else {
+					
 					findVariableInOtherScope1(t, 0);
 				}
 			}
@@ -518,9 +530,11 @@ public class HashMapTable {
 
 				System.out.println(t.getChildren().get(child).getData());
 				// System.out.println(hashArray.get(i).get(astNode.getChildren().get(0).getData()));
-				if (hashArray.get(i).get(t.getChildren().get(child).getData()) == check) {
+				if (hashArray.get(i).get(t.getChildren().get(child).getData()) == "intWord") {
+					
 					System.out.println("TYPE MATCH ON DIFFERENT SCOPED VARIABLES :)");
 				} else {
+				
 					System.out.println("ERROR: TYPE MISMATCH ON DIFFERENT SCOPED VARIABLES");
 
 				}
@@ -619,20 +633,34 @@ public class HashMapTable {
 		}
 	}
 
-	public static TreeNode findLastChild(ArrayList<TreeNode> t) {
-		int size = t.size();
-		System.out.println(t.get(size - 1).getData());
-		return t.get(size - 1);
+	public static TreeNode findLastChild(TreeNode t) {
+		if(!t.getChildren().get(0).getChildren().isEmpty()){
+			//System.out.println("checking");
+			findLastChild(t.getChildren().get(0));
+		}else{
+			System.out.println(t.getChildren().get(0).getData());
+			return t.getChildren().get(0);
+		}
+		return t;
+		
+		//int size = t.size();
+		// System.out.println(t.get(size - 1).getData());
+		//return t.get(size - 1);
 
 	}
 
 	public static boolean checkLastChildOfPrint(TreeNode t) {
-		if (hashArray.get(scopeCounter - 1).containsKey(t.getData())
-				&& hashArray.get(scopeCounter - 1).get(t.getData()) == "intWord") {
-			return true;
+		if (t.getData().matches("(\\d)")) {
+			System.out.println("last value is an int :)");
 		} else {
-			return false;
+			if (hashArray.get(scopeCounter - 1).containsKey(t.getData())
+					&& hashArray.get(scopeCounter - 1).get(t.getData()) == "intWord") {
+				return true;
+			} else {
+				return false;
+			}
 		}
+		return false;
 	}
 
 	public static boolean checkLastChildOfPrintInOtherScope(TreeNode t) {
