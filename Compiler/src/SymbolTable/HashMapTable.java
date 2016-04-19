@@ -208,17 +208,17 @@ public class HashMapTable {
 			// either the first or second variable is in the current scope
 
 			// If both variables are previously declared just type check
-			if (checkKeyInCurrScope(astNode, 0) && checkKeyInCurrScope(astNode, 1)) {
+			if (checkKeyInCurrScopeNotExplicit(astNode, 0) && checkKeyInCurrScopeNotExplicit(astNode, 1)) {
 			
 				scopeTypeCheckCompVariables(astNode);
 			} else if (findVariableInOtherScopeNoTypeCheck(astNode, 0)
 					&& findVariableInOtherScopeNoTypeCheck(astNode, 1)) {
+				
+				scopeTypeCheckCompVariables(astNode);
+			} else if (checkKeyInCurrScopeNotExplicit(astNode, 0) && findVariableInOtherScopeNoTypeCheck(astNode, 1)) {
 			
 				scopeTypeCheckCompVariables(astNode);
-			} else if (checkKeyInCurrScope(astNode, 0) && findVariableInOtherScopeNoTypeCheck(astNode, 1)) {
-			
-				scopeTypeCheckCompVariables(astNode);
-			} else if (findVariableInOtherScopeNoTypeCheck(astNode, 0) && checkKeyInCurrScope(astNode, 1)) {
+			} else if (findVariableInOtherScopeNoTypeCheck(astNode, 0) && checkKeyInCurrScopeNotExplicit(astNode, 1)) {
 				
 				scopeTypeCheckCompVariables(astNode);
 			} else if (checkKeyInCurrScope(astNode, 0) || findVariableInOtherScopeNoTypeCheck(astNode, 0)) {
@@ -338,6 +338,15 @@ public class HashMapTable {
 	public static boolean checkKeyInCurrScope(TreeNode t, int childNum) {
 		if (hashArray.get(scopeCounter - 1).containsKey(t.getChildren().get(childNum).getData())) {
 			System.out.println("Variable: " + t.getChildren().get(childNum).getData() + " :found in current scope");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static boolean checkKeyInCurrScopeNotExplicit(TreeNode t, int childNum) {
+		if (hashArray.get(scopeCounter - 1).containsKey(t.getChildren().get(childNum).getData())) {
+			//System.out.println("Variable: " + t.getChildren().get(childNum).getData() + " :found in current scope");
 			return true;
 		} else {
 			return false;
