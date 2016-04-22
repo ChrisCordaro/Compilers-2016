@@ -289,7 +289,7 @@ public class Parser {
 			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			///this still allows print(007) without quotes
 			parseExpression();
-			myASTarray.get(counter).climb();
+		//	myASTarray.get(counter).climb();
 			myCSTarray.get(counter).climb();
 
 			// parseBoolOp();

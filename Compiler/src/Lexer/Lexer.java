@@ -228,7 +228,7 @@ public class Lexer {
 
 	public static void addEOP(ArrayList<Character> x) {
 		int i = x.size() - 1;
-		if (x.get(i) != '$') {
+	if (x.get(i) != '$') {
 			x.add('$');
 			System.out.println("I TOOK THE LIBERTY TO ADD AN EOP CHARACTER FOR YOU");
 		}

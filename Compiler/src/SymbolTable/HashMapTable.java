@@ -44,7 +44,7 @@ public class HashMapTable {
 
 	public static void scopeAST(TreeNode astNode) {
 		Iterator iter = astNode.getChildren().iterator();
-
+		
 		if (astNode.getData().contains("block")) {
 			// Create new scope
 			// System.out.println("New Block/Scope");
@@ -94,9 +94,20 @@ public class HashMapTable {
 			// current scope
 			// Check types
 
-			// Checks is variable assigned is in curr scope = scopeCounter -1
-			if (checkKeyInCurrScope(astNode, 0)) {
-				//System.out.println("Variable " + astNode.getChildren().get(0).getData() + " declared in current scope");
+			if ((checkKeyInCurrScope(astNode, 0) || findVariableInOtherScopeNoTypeCheck(astNode, 0))
+					&& (checkKeyInCurrScope(astNode, 1) || findVariableInOtherScopeNoTypeCheck(astNode, 1))) {
+				// assigning a variable to a variable, variables have been found
+				System.out.println(
+						"You're attempting to assign one variable to another. Let me just check that they are both declared and that they are type compatible.");
+				if (checkTwoVarAssign(astNode, 0, 1)) {
+					System.out.println("Variable " + astNode.getChildren().get(0).getData() + " and variable "
+							+ astNode.getChildren().get(1).getData() + " have been found and are type compatible! :)");
+				}
+
+			} else if (checkKeyInCurrScope(astNode, 0)) {
+				// System.out.println("Variable " +
+				// astNode.getChildren().get(0).getData() + " declared in
+				// current scope");
 				if (assignTypeCheck(astNode, 1) == 1) {
 					System.out.println("Variable " + astNode.getChildren().get(0).getData() + " set to a string");
 					// Verify type compatible
@@ -148,9 +159,9 @@ public class HashMapTable {
 			// printed
 			checkType(astNode.getChildren().get(0).getData());
 			if (astNode.getChildren().size() == 1 && (astNode.getChildren().get(0).getChildren().isEmpty())) {
-
+				
 				if (checkKeyInCurrScope(astNode, 0)) {
-					//System.out.println("VARIABLE FOUND IN CURRENT SCOPE");
+					// System.out.println("VARIABLE FOUND IN CURRENT SCOPE");
 
 				} else if (astNode.getChildren().get(0).getData().matches("(\\d)")) {
 					System.out.println("PRINTING INT LITERAL");
@@ -209,21 +220,23 @@ public class HashMapTable {
 
 			// If both variables are previously declared just type check
 			if (checkKeyInCurrScopeNotExplicit(astNode, 0) && checkKeyInCurrScopeNotExplicit(astNode, 1)) {
-			
+
 				scopeTypeCheckCompVariables(astNode);
 			} else if (findVariableInOtherScopeNoTypeCheck(astNode, 0)
 					&& findVariableInOtherScopeNoTypeCheck(astNode, 1)) {
-				
+
 				scopeTypeCheckCompVariables(astNode);
 			} else if (checkKeyInCurrScopeNotExplicit(astNode, 0) && findVariableInOtherScopeNoTypeCheck(astNode, 1)) {
-			
+
 				scopeTypeCheckCompVariables(astNode);
 			} else if (findVariableInOtherScopeNoTypeCheck(astNode, 0) && checkKeyInCurrScopeNotExplicit(astNode, 1)) {
-				
+
 				scopeTypeCheckCompVariables(astNode);
 			} else if (checkKeyInCurrScope(astNode, 0) || findVariableInOtherScopeNoTypeCheck(astNode, 0)) {
 				System.out.println("Continuing");
-				//System.out.println("found " + astNode.getChildren().get(0).getData() + " in current scope");
+				// System.out.println("found " +
+				// astNode.getChildren().get(0).getData() + " in current
+				// scope");
 				if (checkCompType(astNode)[0].equals("var") && checkCompType(astNode)[1].equals("literal")) {
 					System.out.println("Attempting to compare a VARIABLE to an LITERAL.");
 					checkType(astNode.getChildren().get(1).getData());
@@ -231,13 +244,13 @@ public class HashMapTable {
 					if (compareType(astNode, 0, check)) {
 						System.out.println("Type comparison for VARIABLE to a LITERAL is CORRECT :)");
 					} else {
-						System.out.println("Type comparison for a VARIABLE to a LITERAL is INCORRECT :(");
+						System.out.println("ERROR: Type comparison for a VARIABLE to a LITERAL is INCORRECT :(");
 					}
 				}
 			} else {
 				checkType(astNode.getChildren().get(0).getData());
 
-				//System.out.println(check);
+				// System.out.println(check);
 				if (check == "varDecl") {
 					// would have found the scope previously so at this point
 					// its an error
@@ -254,7 +267,7 @@ public class HashMapTable {
 					if (compareType(astNode, 1, check)) {
 						System.out.println("Type comparison for LITERAL to a VARIABLE is CORRECT :)");
 					} else {
-						System.out.println("Type comparison for a LITERAL to a VARIABLE is INCORRECT :(");
+						System.out.println("ERROR: Type comparison for a LITERAL to a VARIABLE is INCORRECT :(");
 					}
 				} else if (checkCompType(astNode)[0].equals("literal") && checkCompType(astNode)[1].equals("literal")) {
 					System.out.println("Comparing literal to literal no need to scope check");
@@ -263,12 +276,11 @@ public class HashMapTable {
 			} else {
 				checkType(astNode.getChildren().get(1).getData());
 
-				//System.out.println(check);
+				// System.out.println(check);
 				if (check == "varDecl") {
 					// would have found the scope previously so at this point
 					// its an errora
-					
-							
+
 					System.out.println("ERROR: " + astNode.getChildren().get(1).getData() + " was never declared");
 				} else {
 					System.out.println("Literal Value present");
@@ -343,10 +355,12 @@ public class HashMapTable {
 			return false;
 		}
 	}
-	
+
 	public static boolean checkKeyInCurrScopeNotExplicit(TreeNode t, int childNum) {
 		if (hashArray.get(scopeCounter - 1).containsKey(t.getChildren().get(childNum).getData())) {
-			//System.out.println("Variable: " + t.getChildren().get(childNum).getData() + " :found in current scope");
+			// System.out.println("Variable: " +
+			// t.getChildren().get(childNum).getData() + " :found in current
+			// scope");
 			return true;
 		} else {
 			return false;
@@ -359,6 +373,65 @@ public class HashMapTable {
 		} else {
 			return false;
 		}
+	}
+
+	public static boolean checkTwoVarAssign(TreeNode t, int child1, int child2) {
+		boolean found1 = false;
+		boolean found2 = false;
+		String child1Type = null;
+		String child2Type = null;
+		if (checkKeyInCurrScope(t, child1)) {
+			//System.out.println("Found " + t.getChildren().get(child1).getData() + " in current scope");
+			//child1Type = t.getChildren().get(child1).getData();
+			child1Type = (String) hashArray.get(scopeCounter-1).get(t.getChildren().get(child1).getData());
+			found1 = true;
+		} else {
+			System.out.println("CHECKING");
+			for (int i = scopeCounter-1; i < scopeCounter; i--) {
+				if (hashArray.get(i).containsKey(t.getChildren().get(child1).getData())) {
+					System.out.println("Found " + t.getChildren().get(child1).getData() + " in scope " + i);
+					child1Type = (String) hashArray.get(i).get(t.getChildren().get(child1).getData());
+					found1 = true;
+					break;
+				}
+			}
+		}
+
+		if (checkKeyInCurrScope(t, child2)) {
+			//System.out.println("Found " + t.getChildren().get(child2).getData() + " in current scope");
+			//System.out.println( t.getChildren().get(child2).getData());
+			//System.out.println();
+			child2Type = (String) hashArray.get(scopeCounter-1).get(t.getChildren().get(child2).getData());
+			found2 = true;
+		} else {
+			
+			for (int j = scopeCounter-1; j < scopeCounter; j--) {
+
+				if (hashArray.get(j).containsKey(t.getChildren().get(child2).getData())) {
+					System.out.println("Found " + t.getChildren().get(child2).getData() + " in scope " + j);
+					child2Type = (String) hashArray.get(j).get(t.getChildren().get(child2).getData());
+					found2 = true;
+					break;
+				}
+			}
+		}
+		if ((found1 == true) && (found2 == true)) {
+			System.out.println(child1Type);
+			System.out.println(child2Type);
+			// System.out.println("Child 1 type = " + child1Type);
+			// System.out.println("Child 2 type = " + child2Type);
+			if (child1Type == child2Type) {
+				return true;
+			} else {
+				System.out.println("Variable " + t.getChildren().get(0).getData() + " and variable "
+						+ t.getChildren().get(1).getData() + " have been FOUND, but they are NOT type compatible");
+			}
+		} else {
+			System.out.println("shouldnt happen error");
+			return false;
+		}
+		return false;
+
 	}
 
 	// Checks what type the variable is assigned to
@@ -379,11 +452,19 @@ public class HashMapTable {
 	// Compares the type that the variable is being set to, to the type the
 	// variable is declared
 	public static boolean compareType(TreeNode t, int child, String type) {
-		if (hashArray.get(scopeCounter - 1).get(t.getChildren().get(child).getData()) == type) {
+		// for(int i = 0; i < scopeCounter - 1; i ++){
+		if (hashArray.get(scopeCounter -1).get(t.getChildren().get(child).getData()) == type) {
 			return true;
 		} else {
+			for (int i = 0; i < scopeCounter - 1; i++) {
+				if (hashArray.get(i).get(t.getChildren().get(child).getData()) == type) {
+					//return true;
+				}
+			}
 			return false;
 		}
+		// }
+		// return false;
 	}
 
 	public static boolean compareTwoLiterals(TreeNode t) {
@@ -421,7 +502,7 @@ public class HashMapTable {
 	 * }
 	 */
 
-	public static void checkType(String x) {
+	public static String checkType(String x) {
 		if (x.startsWith("\"")) {
 			check = "stringWord";
 		} else if (x.matches("(true)") || x.matches("(false)")) {
@@ -431,6 +512,11 @@ public class HashMapTable {
 		} else {
 			check = "varDecl";
 		}
+		return check;
+
+	}
+
+	public static void useCheckForType(String s, TreeNode t) {
 
 	}
 
@@ -556,6 +642,10 @@ public class HashMapTable {
 								+ hashArray.get(i).get(t.getChildren().get(child).getData()) + " to a " + check);
 
 					}
+
+					if (check == "varDecl") {
+						// some method to check the type of
+					}
 					// varSetTo = t.getChildren().get(child + 1).getData();
 
 					// System.out.println(hashArray.get(i));
@@ -669,8 +759,10 @@ public class HashMapTable {
 	public static void findPrintVariableInOtherScope(TreeNode t, int child) {
 		boolean found = false;
 		String declaredVarType;
+		System.out.println(scopeCounter);
 		System.out.println("Variable " + "'" + t.getChildren().get(child).getData() + "'"
 				+ " not declared in given scope. Checking parent scopes");
+		
 		for (int i = 0; i < scopeCounter - 1; i++) {
 			if (hashArray.get(i).containsKey(t.getChildren().get(child).getData())) {
 				System.out.println("FOUND VARIABLE DECLARATION IN SCOPE " + (i));
@@ -683,6 +775,16 @@ public class HashMapTable {
 		if (found == false) {
 			System.out.println("VARIABLE NOT FOUND ERROR1");
 
+		}
+	}
+	
+	public static void findParentBlocks(TreeNode t){
+		int counter = 0;
+		ArrayList<Integer> parentBlocks = new ArrayList<Integer>();
+		while(t.getParent().getData() != null){
+			if(t.getParent().getData().contains("block")){
+				
+			}
 		}
 	}
 
