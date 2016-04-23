@@ -13,7 +13,7 @@ public class Parser {
 	private static TreeNodeList myCSTree = new TreeNodeList();
 	private static ArrayList<TreeNodeList> myCSTarray = new ArrayList();
 	//private static TreeNodeList myASTree = new TreeNodeList();
-	private static int blockNum = 1;
+	private static int blockNum = 0;
 
 	private static HashMapTable myHMT = new HashMapTable();
 	private static ArrayList<HashMap> hashArray = new ArrayList();
