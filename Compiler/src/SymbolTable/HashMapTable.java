@@ -112,7 +112,7 @@ public class HashMapTable {
 				}
 
 			} else if (checkKeyInCurrScope(astNode, 0)) {
-				System.out.println("A");
+				
 				// System.out.println("Variable " +
 				// astNode.getChildren().get(0).getData() + " declared in
 				// current scope");
@@ -335,7 +335,7 @@ public class HashMapTable {
 			// System.out.println("matched an int");
 			checkIntExpression(t.getChildren().get(0));
 
-		}else if(t.getChildren().get(0).getData().matches("(\"([^\"]*)\")")){
+		}else if(t.getData().matches("(\"([^\"]*)\")")){
 			System.out.println("ERROR: String literal found in int expression");
 		}else if (!t.getData().matches("\\d")) {
 			
@@ -793,7 +793,7 @@ public class HashMapTable {
 	public static void findPrintVariableInOtherScope(TreeNode t, int child) {
 		boolean found = false;
 		String declaredVarType;
-		System.out.println(scopeCounter);
+		//System.out.println(scopeCounter);
 		System.out.println("Variable " + "'" + t.getChildren().get(child).getData() + "'"
 				+ " not declared in given scope. Checking parent scopes");
 		
