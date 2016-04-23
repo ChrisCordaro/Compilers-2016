@@ -311,6 +311,7 @@ public class HashMapTable {
 			// System.out.println(hashArray.get(scopeCounter - 1));
 
 		} else if (astNode.getData().equals("intExpr")) {
+			
 			updateScope(astNode);
 
 			// check to make sure the last value is an int or a variable
@@ -336,7 +337,7 @@ public class HashMapTable {
 			// System.out.println("matched an int");
 			checkIntExpression(t.getChildren().get(0));
 
-		}else if(t.getData().matches("(\"([^\"]*)\")")){
+		}else if(t.getChildren().get(0).getData().startsWith("\"")){
 			System.out.println("ERROR: String literal found in int expression");
 		}else if (!t.getData().matches("\\d")) {
 			
