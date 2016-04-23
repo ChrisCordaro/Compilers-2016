@@ -156,6 +156,7 @@ public class HashMapTable {
 					}
 				
 				}else if(assignTypeCheck(astNode, 1) == 4){
+				//	System.out.println("ASD");
 					findVariableInOtherScope(astNode, 1);
 				}
 			} else {
@@ -466,13 +467,13 @@ public class HashMapTable {
 				|| t.getChildren().get(child).getData().startsWith("f")) {
 			return 2;
 			// boolean literal
-		} else  if(t.getChildren().get(child).getData().matches("//d")){
+		} else  if(t.getChildren().get(child).getData().matches(("(\\d)"))){
 		
-			return 4;
+			return 3;
 			//int
 		} else{
 			//System.out.println("INT");
-			return 3;
+			return 4;
 			//var
 		}
 	}
