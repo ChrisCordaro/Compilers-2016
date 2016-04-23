@@ -92,6 +92,7 @@ public class HashMapTable {
 
 		} else if (astNode.getData() == "assignStatement") {
 			updateScope(astNode);
+			
 			//System.out.println(scopeCounter);
 			// Look up symbol to the right(astNode.getChildren().get(1)) in the
 			// current scope
@@ -100,7 +101,7 @@ public class HashMapTable {
 			if ((checkKeyInCurrScope(astNode, 0) || findVariableInOtherScopeNoTypeCheck(astNode, 0))
 					&& (checkKeyInCurrScope(astNode, 1) || findVariableInOtherScopeNoTypeCheck(astNode, 1))) {
 				// assigning a variable to a variable, variables have been found
-				System.out.println("ASDASD");
+				//System.out.println("ASDASD");
 				System.out.println(
 						"You're attempting to assign one variable to another. Let me just check that they are both declared and that they are type compatible.");
 				if (checkTwoVarAssign(astNode, 0, 1)) {
@@ -111,7 +112,7 @@ public class HashMapTable {
 				}
 
 			} else if (checkKeyInCurrScope(astNode, 0)) {
-			
+				System.out.println("A");
 				// System.out.println("Variable " +
 				// astNode.getChildren().get(0).getData() + " declared in
 				// current scope");
@@ -160,7 +161,7 @@ public class HashMapTable {
 			} else {
 				// Variable not declared in the current scope, so check if it
 				// has been previously declared
-
+				//System.out.println("NO");
 				findVariableInOtherScope(astNode, 0);
 
 			}
@@ -309,6 +310,7 @@ public class HashMapTable {
 			// System.out.println(hashArray.get(scopeCounter - 1));
 
 		} else if (astNode.getData().equals("intExpr")) {
+			updateScope(astNode);
 
 			// check to make sure the last value is an int or a variable
 			// if its a variable type and scope check it
@@ -333,7 +335,10 @@ public class HashMapTable {
 			// System.out.println("matched an int");
 			checkIntExpression(t.getChildren().get(0));
 
-		} else if (!t.getData().matches("\\d")) {
+		}else if(t.getChildren().get(0).getData().matches("(\"([^\"]*)\")")){
+			System.out.println("ERROR: String literal found in int expression");
+		}else if (!t.getData().matches("\\d")) {
+			
 			System.out.println(
 					"Found a variable: " + t.getChildren().get(0).getData() + " :checking it's scope and type");
 			// System.out.println(scopeCounter);
@@ -462,11 +467,13 @@ public class HashMapTable {
 			return 2;
 			// boolean literal
 		} else  if(t.getChildren().get(child).getData().matches("//d")){
-			return 3;
-			//variable 
-		} else{
+		
 			return 4;
 			//int
+		} else{
+			//System.out.println("INT");
+			return 3;
+			//var
 		}
 	}
 
