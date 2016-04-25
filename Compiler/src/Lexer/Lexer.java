@@ -1,4 +1,5 @@
 package Lexer;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,16 +28,15 @@ public class Lexer {
 	private static String assign = "(=)";
 	private static String digit = "(\\d)";
 	private static String alpha = "([a-z])";
-//	private static String space = "(\\s)";
+	// private static String space = "(\\s)";
 	private static String leftParen = "(\\()";
 	private static String rightParen = "(\\))";
 	private static String leftBrace = "(\\{)";
 	private static String rightBrace = "(\\})";
 	private static String quote = "(\")";
 	// make string not accept captial letters
-	//private static String string = "(\"([^\"]*)\")";
+	// private static String string = "(\"([^\"]*)\")";
 	private static String string = "(\"([a-z\\s]*)\")";
-
 
 	private static String equality = "(==)";
 	private static String notEqual = "(!=)";
@@ -57,10 +57,10 @@ public class Lexer {
 	private static boolean inString = false;
 	private static boolean verbose = false;
 
-	static Parser myParser = new Parser();
 	static HashMap myHashMap = new HashMap();
 
 	public static void main(String[] args) throws IOException {
+		Parser myParser = new Parser();
 		// Alter file path to
 		// FileInputStream fileInput = new
 		// FileInputStream("C:/Users/Chris/Desktop/test.txt");
@@ -105,12 +105,11 @@ public class Lexer {
 			charArray.add(c);
 
 		}
-	
 
 		testForSpace(charArray);
 		// System.out.println(analyzeList(charArray));
-		//addEOP(charArray);
-		
+		// addEOP(charArray);
+
 		if (testProperQuote(charArray)) {
 			System.out.println("FIX YOUR QUOTES");
 		} else if (checkBadInput(analyzeList(charArray))) {
@@ -127,12 +126,13 @@ public class Lexer {
 				// tokenArray.get(i).getValue());
 				System.out.println("Token " + i + " : " + tokenArray.get(i).getType());
 			}
-			Parser.parseProgram();
-			for (int i = 0; i < tokenArray.size(); i++) {
-				System.out.println(tokenArray.get(i).getType());
+			myParser.parseProgram();
+			if (getVerbose()) {
+				for (int i = 0; i < tokenArray.size(); i++) {
+					System.out.println(tokenArray.get(i).getType());
+				}
 			}
-			
-			
+
 		}
 
 		// System.out.println("TESTING FOR STRINGS ");
@@ -148,6 +148,14 @@ public class Lexer {
 	// Iterates through arraylist creating a new array list of characters
 	// Until a space is found. (May have to fix how it recognizes a space)
 	// Need to add functionality that will tell the user where the error exists.
+
+	public static boolean isVerbose() {
+		return verbose;
+	}
+
+	public static void setVerbose(boolean verbose) {
+		Lexer.verbose = verbose;
+	}
 
 	public static boolean checkLexError(ArrayList<Character> x) {
 		if (checkBadInput(analyzeList(charArray))) {
@@ -226,13 +234,11 @@ public class Lexer {
 
 	}
 
-	/*public static void addEOP(ArrayList<Character> x) {
-		int i = x.size() - 1;
-	if (x.get(i) != '$') {
-			x.add('$');
-			System.out.println("I TOOK THE LIBERTY TO ADD AN EOP CHARACTER FOR YOU");
-		}
-	}*/
+	/*
+	 * public static void addEOP(ArrayList<Character> x) { int i = x.size() - 1;
+	 * if (x.get(i) != '$') { x.add('$'); System.out.println(
+	 * "I TOOK THE LIBERTY TO ADD AN EOP CHARACTER FOR YOU"); } }
+	 */
 
 	// This checks through the chaacter array to make sure that no 'bad' tokens
 	// get through
@@ -312,9 +318,13 @@ public class Lexer {
 	public static ArrayList<Token> getTokenArray() {
 		return tokenArray;
 	}
-	
-	public static ArrayList<String> getValidArray(){
+
+	public static ArrayList<String> getValidArray() {
 		return validArray;
+	}
+
+	public static boolean getVerbose() {
+		return verbose;
 	}
 
 }

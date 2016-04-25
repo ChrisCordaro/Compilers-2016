@@ -10,29 +10,29 @@ import Tree.TreeNodeList;
 
 public class HashMapTable {
 
-	private static TreeNodeList AST;
-	private static HashMap myHashMap;
-	private static ArrayList<String> scopeCheckList = new ArrayList();
+	private  TreeNodeList AST;
+	private HashMap myHashMap;
+	private  ArrayList<String> scopeCheckList = new ArrayList();
 
 	//
-	private static ArrayList<HashMap> hashArray = new ArrayList();
-	private static int scopeCounter = 0;
+	private  ArrayList<HashMap> hashArray = new ArrayList();
+	private  int scopeCounter = 0;
 
-	private static String varSetTo;
-	private static String varType;
-	private static String check;
-	private static boolean keepGoing = true;
-
+	private  String varSetTo;
+	private  String varType;
+	private String check;
+	private  boolean keepGoing = true;
+	 Parser myParser = new Parser();
 	public void HashMap() {
-		TreeNodeList AST = Parser.getAST();
-		HashMap myHashMap = new HashMap();
+		 AST = myParser.getAST();
+		 myHashMap = new HashMap();
 	}
 
 	public void HashMapTable() {
 
 	}
 
-	public static void verticlePrintAst(TreeNode astRoot) {
+	public void verticlePrintAst(TreeNode astRoot) {
 		System.out.println(" " + astRoot.getData());
 		scopeCheckList.add(astRoot.getData());
 		Iterator iter = astRoot.getChildren().iterator();
@@ -42,7 +42,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static void scopeAST(TreeNode astNode) {
+	public void scopeAST(TreeNode astNode) {
 		Iterator iter = astNode.getChildren().iterator();
 
 		if (astNode.getData().contains("block")) {
@@ -330,7 +330,7 @@ public class HashMapTable {
 
 	}
 
-	public static void checkIntExpression(TreeNode t) {
+	public void checkIntExpression(TreeNode t) {
 
 		if ((!t.getChildren().isEmpty()) && t.getChildren().get(0).getData().matches("\\d")) {
 			// System.out.println(t.getChildren().get(0).getData());
@@ -369,7 +369,7 @@ public class HashMapTable {
 
 	}
 
-	public static boolean checkKeyInCurrScope(TreeNode t, int childNum) {
+	public boolean checkKeyInCurrScope(TreeNode t, int childNum) {
 		if (hashArray.get(scopeCounter).containsKey(t.getChildren().get(childNum).getData())) {
 			// System.out.println("Variable: " +
 			// t.getChildren().get(childNum).getData() + " :found in current
@@ -380,7 +380,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static boolean checkKeyInCurrScopeNotExplicit(TreeNode t, int childNum) {
+	public  boolean checkKeyInCurrScopeNotExplicit(TreeNode t, int childNum) {
 		if (hashArray.get(scopeCounter).containsKey(t.getChildren().get(childNum).getData())) {
 			// System.out.println("Variable: " +
 			// t.getChildren().get(childNum).getData() + " :found in current
@@ -391,7 +391,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static boolean checkCompAssignVariable(TreeNode t, int child) {
+	public  boolean checkCompAssignVariable(TreeNode t, int child) {
 		if (hashArray.get(scopeCounter - 1).containsKey(t.getChildren().get(child).getData())) {
 			return true;
 		} else {
@@ -399,7 +399,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static boolean checkTwoVarAssign(TreeNode t, int child1, int child2) {
+	public  boolean checkTwoVarAssign(TreeNode t, int child1, int child2) {
 		boolean found1 = false;
 		boolean found2 = false;
 		String child1Type = null;
@@ -467,7 +467,7 @@ public class HashMapTable {
 	}
 
 	// Checks what type the variable is assigned to
-	public static int assignTypeCheck(TreeNode t, int child) {
+	public  int assignTypeCheck(TreeNode t, int child) {
 		if (t.getChildren().get(child).getData().startsWith("\"")) {
 			return 1;
 			// string
@@ -488,7 +488,7 @@ public class HashMapTable {
 
 	// Compares the type that the variable is being set to, to the type the
 	// variable is declared
-	public static boolean compareType(TreeNode t, int child, String type) {
+	public  boolean compareType(TreeNode t, int child, String type) {
 		// for(int i = 0; i < scopeCounter - 1; i ++){
 		if (hashArray.get(scopeCounter).get(t.getChildren().get(child).getData()) == type) {
 			return true;
@@ -539,7 +539,7 @@ public class HashMapTable {
 	 * }
 	 */
 
-	public static String checkType(String x) {
+	public  String checkType(String x) {
 		if (x.startsWith("\"")) {
 			check = "stringWord";
 		} else if (x.matches("(true)") || x.matches("(false)")) {
@@ -553,7 +553,7 @@ public class HashMapTable {
 
 	}
 
-	public static void updateScope(TreeNode t) {
+	public  void updateScope(TreeNode t) {
 
 		if (t.getParent().getData().contains("block")) {
 			char lastChar = t.getParent().getData().charAt(t.getParent().getData().length() - 1);
@@ -561,7 +561,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static String[] checkCompType(TreeNode t) {
+	public  String[] checkCompType(TreeNode t) {
 		String x = t.getChildren().get(0).getData();
 		String y = t.getChildren().get(1).getData();
 		String resultX;
@@ -582,7 +582,7 @@ public class HashMapTable {
 		return results;
 	}
 
-	public static boolean findVariableInOtherScopeNoTypeCheck(TreeNode t, int child) {
+	public  boolean findVariableInOtherScopeNoTypeCheck(TreeNode t, int child) {
 		for (int i = scopeCounter - 1; i >= 0; i--) {
 
 			if (hashArray.get(i).containsKey(t.getChildren().get(child).getData())) {
@@ -597,7 +597,7 @@ public class HashMapTable {
 		return false;
 	}
 
-	public static boolean findVariableInOtherScope(TreeNode t, int child) {
+	public  boolean findVariableInOtherScope(TreeNode t, int child) {
 
 		// Check parent scopes
 		// Still need to figure out what to do if its not found
@@ -711,7 +711,7 @@ public class HashMapTable {
 		return false;
 	}
 
-	public static void scopeTypeCheckCompVariables(TreeNode t) {
+	public  void scopeTypeCheckCompVariables(TreeNode t) {
 		int found = 0;
 		int scope1 = 0;
 		int scope2 = 0;
@@ -753,7 +753,7 @@ public class HashMapTable {
 		// }
 	}
 
-	public static void findVariableInOtherScope1(TreeNode t, int child) {
+	public  void findVariableInOtherScope1(TreeNode t, int child) {
 
 		// Check parent scopes
 		// Still need to figure out what to do if its not found
@@ -803,7 +803,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static void findPrintVariableInOtherScope(TreeNode t, int child) {
+	public  void findPrintVariableInOtherScope(TreeNode t, int child) {
 		boolean found = false;
 		String declaredVarType;
 		// System.out.println(scopeCounter);
@@ -825,7 +825,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static void findParentBlocks(TreeNode t) {
+	public  void findParentBlocks(TreeNode t) {
 		int counter = 0;
 		ArrayList<Integer> parentBlocks = new ArrayList<Integer>();
 		while (t.getParent().getData() != null) {
@@ -835,7 +835,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static boolean checkDifScopeVarTypes(String c, String varType) {
+	public  boolean checkDifScopeVarTypes(String c, String varType) {
 		c = check;
 		if (check == varType) {
 			return true;
@@ -845,7 +845,7 @@ public class HashMapTable {
 
 	}
 
-	public static String findParentBlock(TreeNode t) {
+	public  String findParentBlock(TreeNode t) {
 		while (t.getParent().getData().contains("block") == false) {
 			t.getParent();
 		}
@@ -886,7 +886,7 @@ public class HashMapTable {
 		System.out.println(hashArray.size());
 	}
 
-	public static void printChildren(ArrayList<TreeNode> t) {
+	public  void printChildren(ArrayList<TreeNode> t) {
 		for (TreeNode x : t) {
 			// System.out.println("");
 			System.out.println("child: " + x.getData());
@@ -896,7 +896,7 @@ public class HashMapTable {
 		}
 	}
 
-	public static TreeNode findLastChild(TreeNode t) {
+	public  TreeNode findLastChild(TreeNode t) {
 		if (!t.getChildren().get(0).getChildren().isEmpty()) {
 			// System.out.println("checking");
 			findLastChild(t.getChildren().get(0));
@@ -912,7 +912,7 @@ public class HashMapTable {
 
 	}
 
-	public static boolean checkLastChildOfPrint(TreeNode t) {
+	public  boolean checkLastChildOfPrint(TreeNode t) {
 		if (t.getData().matches("(\\d)")) {
 			System.out.println("last value is an int :)");
 		} else {
@@ -926,7 +926,7 @@ public class HashMapTable {
 		return false;
 	}
 
-	public static boolean checkLastChildOfPrintInOtherScope(TreeNode t) {
+	public  boolean checkLastChildOfPrintInOtherScope(TreeNode t) {
 
 		System.out.println(
 				"Variable " + "'" + t.getData() + "'" + " not declared in given scope. Checking parent scopes");
@@ -939,7 +939,7 @@ public class HashMapTable {
 		return false;
 	}
 
-	public static boolean addVarDeclToCorrectScope(TreeNode t) {
+	public  boolean addVarDeclToCorrectScope(TreeNode t) {
 
 		if (findParentBlock(t).equals("block" + scopeCounter)) {
 			// System.out.println(scopeCounter);
@@ -951,28 +951,28 @@ public class HashMapTable {
 		}
 	}
 
-	public static HashMap getMyHashMap() {
+	public  HashMap getMyHashMap() {
 		return myHashMap;
 	}
 
-	public static void setMyHashMap(HashMap myHashMap) {
-		HashMapTable.myHashMap = myHashMap;
+	public  void setMyHashMap(HashMap myHashMap) {
+		myHashMap = myHashMap;
 	}
 
-	public static ArrayList<String> getScopeCheckList() {
+	public  ArrayList<String> getScopeCheckList() {
 		return scopeCheckList;
 	}
 
-	public static void setScopeCheckList(ArrayList<String> scopeCheckList) {
-		HashMapTable.scopeCheckList = scopeCheckList;
+	public  void setScopeCheckList(ArrayList<String> scopeCheckList) {
+		scopeCheckList = scopeCheckList;
 	}
 
-	public static ArrayList<HashMap> getHashArray() {
+	public  ArrayList<HashMap> getHashArray() {
 		return hashArray;
 	}
 
-	public static void setHashArray(ArrayList<HashMap> hashArray) {
-		HashMapTable.hashArray = hashArray;
+	public  void setHashArray(ArrayList<HashMap> hashArray) {
+		hashArray = hashArray;
 	}
 
 	public int getScopeCounter() {
