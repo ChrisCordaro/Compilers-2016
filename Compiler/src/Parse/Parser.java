@@ -12,19 +12,18 @@ public class Parser {
 	private static boolean continueParse = true;
 	private static TreeNodeList myCSTree = new TreeNodeList();
 	private static ArrayList<TreeNodeList> myCSTarray = new ArrayList();
-	//private static TreeNodeList myASTree = new TreeNodeList();
+	// private static TreeNodeList myASTree = new TreeNodeList();
 	private static int blockNum = 0;
 
 	private static HashMapTable myHMT = new HashMapTable();
 	private static ArrayList<HashMap> hashArray = new ArrayList();
 	private static ArrayList<TreeNodeList> myASTarray = new ArrayList();
-	
+
 	private static int counter = 0;
-	
+
 	public static void Parser() {
 
 	}
-	
 
 	// Here is where you create a leaf node
 	public static void matchAndAnnihilate(String expectedToken) {
@@ -79,71 +78,78 @@ public class Parser {
 			System.out.println("Children of Main Block: ");
 
 			myCSTarray.get(counter).blockChildren();
-
-			System.out.println("::::::::::::::::");
-			System.out.println("AST");
-			System.out.println(counter);
-			myASTarray.get(counter).blockChildren();
-
-			System.out.println("AST children test");
-			
-
-			// print cst
-			System.out.println("PRINTING CST(S)");
-			System.out.println("::::::::::::");
-			for(int i = 0; i < myCSTarray.size(); i ++){
-				System.out.println("Print CST number: " + i);
-				myCSTarray.get(counter).getRoot().print("", true);
-				System.out.println("");
-			}
-
-			// print ast
-			System.out.println("PRINTING AST(S)");
-			System.out.println("::::::::::::");
-			for(int i = 0; i < myASTarray.size(); i++){
-				System.out.println("Printing AST number: " + i);
-				myASTarray.get(counter).getRoot().print("", true);
-			}
-			
-			
-			//hashtest
-			
-			//myHMT.verticlePrintAst(myASTree.getRoot());
-			System.out.println();
-			//myHMT.scopeCheckAnalyze(myHMT.getScopeCheckList());
-			for(int i = 0; i < myASTarray.size(); i++){
-				System.out.println("-----START ANALYSIS FOR SYMBOT TABLE " + i + "----------");
-				myHMT.scopeAST(myASTarray.get(i).getRoot());
-					System.out.println("------END---------");
-					System.out.println("");
-			}
-			for(int i = 0; i < myASTarray.size(); i ++){
-				System.out.println("Printing hash array for program: " + i);
-				System.out.println("");
-				myHMT.printHashArray(myHMT.getHashArray());
-				System.out.println("");
-			}
-
 		}
+			//System.out.println("::::::::::::::::");
+			//System.out.println("AST");
+			//System.out.println(counter);
+			//myASTarray.get(counter).blockChildren();
 
-		if (!Lexer.getTokenArray().isEmpty() && continueParse) {
-			counter = counter + 1;
-			blockNum=1;
-			parseProgram();
+			//System.out.println("AST children test");
+			
 
-		} else {
-			continueParse = false;
+		
+	
+
+	
+
+	if(!Lexer.getTokenArray().isEmpty()&&continueParse)
+	{
+		
+		counter=counter+1;blockNum=0;
+		parseProgram();
+		
+
+	}else{
+		
+		continueParse=false;
 		}
+	// print cst
 
+	System.out.println("PRINTING CST(S)");
+	System.out.println("::::::::::::");
+	for(int i = 0; i < myCSTarray.size(); i ++){
+		System.out.println("Print CST number: " + i);
+		myCSTarray.get(counter).getRoot().print("", true);
+		System.out.println("");
 	}
+
+	// print ast
+	System.out.println("PRINTING AST(S)");
+	System.out.println("::::::::::::");
+	for(int i = 0; i < myASTarray.size(); i++){
+		System.out.println("Printing AST number: " + i);
+		myASTarray.get(counter).getRoot().print("", true);
+	}
+	
+	
+	//hashtest
+	
+	//myHMT.verticlePrintAst(myASTree.getRoot());
+	System.out.println();
+	//myHMT.scopeCheckAnalyze(myHMT.getScopeCheckList());
+	for(int i = 0; i < myASTarray.size(); i++){
+		System.out.println("-----START ANALYSIS FOR SYMBOT TABLE " + i + "----------");
+		myHMT.scopeAST(myASTarray.get(i).getRoot());
+			System.out.println("------END---------");
+			System.out.println("");
+	}
+	for(int i = 0; i < myASTarray.size(); i ++){
+		System.out.println("Printing hash array for program: " + i);
+		System.out.println("");
+		myHMT.printHashArray(myHMT.getHashArray());
+		System.out.println("");
+	}
+	}
+	
+	
 
 	// Might have to remove the token instead of using a parseIndex
 	public static void parseBlock() {
 		if (continueParse) {
 			myCSTarray.get(counter).addBranchNode("block");
-			//System.out.println(blockNum);
-			myASTarray.get(counter).addASTBranchNode("block"+blockNum);
-			blockNum ++;
+			// System.out.println(blockNum);
+			myASTarray.get(counter).addASTBranchNode("block" + blockNum);
+			blockNum++;
 
 			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
 			matchAndAnnihilate("leftBrace");
@@ -158,9 +164,9 @@ public class Parser {
 			// myASTree.climb();
 		}
 		if (continueParse) {
-			//myASTree.addLeafNode("endBlock");
+			// myASTree.addLeafNode("endBlock");
 			matchAndAnnihilate("rightBrace");
-			
+
 			myASTarray.get(counter).climb();
 			myCSTarray.get(counter).climb();
 		}
@@ -287,9 +293,9 @@ public class Parser {
 		if (continueParse) {
 			myCSTarray.get(counter).addBranchNode("expression");
 			System.out.println(myCSTarray.get(counter).getCurrItem().getData());
-			///this still allows print(007) without quotes
+			/// this still allows print(007) without quotes
 			parseExpression();
-		//	myASTarray.get(counter).climb();
+			// myASTarray.get(counter).climb();
 			myCSTarray.get(counter).climb();
 
 			// parseBoolOp();
@@ -385,6 +391,7 @@ public class Parser {
 	public static void parseBoolExpression() {
 		if (Lexer.getTokenArray().get(0).getType() == "true" || Lexer.getTokenArray().get(0).getType() == "false") {
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
+			myASTarray.get(counter).climb();
 			matchAndAnnihilate(Lexer.getTokenArray().get(0).getType());
 			myCSTarray.get(counter).climb();
 		} else {
@@ -400,7 +407,7 @@ public class Parser {
 			}
 
 			if (continueParse) {
-				//myASTree.addASTBranchNode("comparison");
+				// myASTree.addASTBranchNode("comparison");
 				myASTarray.get(counter).addASTBranchNode(Lexer.getTokenArray().get(1).getValue());
 				parseExpression();
 				// myASTree.climb();
@@ -494,26 +501,26 @@ public class Parser {
 	}
 
 	public static void parseIntExpression() {
-		if (continueParse && (Lexer.getTokenArray().get(1).getType()!= "intOp")) {
+		if (continueParse && (Lexer.getTokenArray().get(1).getType() != "intOp")) {
 			myASTarray.get(counter).addLeafNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate("digit");
 			myASTarray.get(counter).climb();
 			myCSTarray.get(counter).climb();
-		}else if(continueParse && (Lexer.getTokenArray().get(1).getType()== "intOp")){
+		} else if (continueParse && (Lexer.getTokenArray().get(1).getType() == "intOp")) {
 			myASTarray.get(counter).addASTBranchNode(Lexer.getTokenArray().get(0).getValue());
 			matchAndAnnihilate("digit");
-			//myASTarray.get(counter).climb();
+			// myASTarray.get(counter).climb();
 			myCSTarray.get(counter).climb();
 		}
 		// How should the ast look for + operations
 		if (Lexer.getTokenArray().get(0).getType() == "intOp" && continueParse) {
 			// System.out.println("FOUND THE +");
-			//myASTarray.get(counter).climb();
+			// myASTarray.get(counter).climb();
 			myASTarray.get(counter).addASTBranchNode("intExpr");
 			matchAndAnnihilate("intOp");
 			myCSTarray.get(counter).climb();
-			//myASTarray.get(counter).climb();
-			
+			// myASTarray.get(counter).climb();
+
 			if (continueParse) {
 				parseExpression();
 				myASTarray.get(counter).climb();
@@ -523,7 +530,6 @@ public class Parser {
 			myASTarray.get(counter).climb();
 		}
 
-		
 		/*
 		 * if (tokenArray.get(0).getType() == "addOp") { if (continueParse) {
 		 * matchAndAnnihilate("addOp"); parseExpression(); } } else { //
@@ -656,8 +662,8 @@ public class Parser {
 		}
 
 	}
-	
-	public static TreeNodeList getAST(){
+
+	public static TreeNodeList getAST() {
 		return myASTarray.get(counter);
 	}
 
