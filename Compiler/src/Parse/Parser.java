@@ -34,7 +34,7 @@ public class Parser {
 
 	// Here is where you create a leaf node
 	public void matchAndAnnihilate(String expectedToken) {
-		System.out.println(Lexer.getVerbose());
+		
 		if (Lexer.getTokenArray().get(0).getType() == expectedToken) {
 			if (Lexer.getVerbose()) {
 				System.out.println(
