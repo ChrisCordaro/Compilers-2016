@@ -418,7 +418,7 @@ public class Parser {
 				}
 			} else {
 				continueParse = false;
-				System.out.println("EXPECTING 'TRUE', 'FALSE', OR BOOL EXPRESSION");
+				System.out.println("PARSE ERROR: EXPECTING 'TRUE', 'FALSE', OR BOOL EXPRESSION");
 				// continueParse = false;
 			}
 

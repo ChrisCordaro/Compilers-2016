@@ -311,7 +311,7 @@ public class HashMapTable {
 			// System.out.println(hashArray.get(scopeCounter - 1));
 
 		} else if (astNode.getData().equals("intExpr")) {
-
+			System.out.println("Checking int expression");
 			updateScope(astNode);
 
 			// check to make sure the last value is an int or a variable

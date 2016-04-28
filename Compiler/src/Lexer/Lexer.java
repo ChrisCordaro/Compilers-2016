@@ -91,10 +91,10 @@ public class Lexer {
 		}
 
 		if (verboseCheck.equals("Y") || verboseCheck.equals("y")) {
-			System.out.println("YYYYYYYY");
+		
 			verbose = true;
 		} else if (verboseCheck == "N" || verboseCheck == "n") {
-			System.out.println("NNNNNNNNNNn");
+			
 			verbose = false;
 		}
 
@@ -214,12 +214,12 @@ public class Lexer {
 
 			// if (x.get(i) == ' ') {
 			// System.out.println("List of characters");
-			if (verbose) {
-				System.out.println("Characters being analyzed " + charArray);
-			}
+			
 
 			// }
+		
 		}
+	
 	}
 
 	public static boolean testProperQuote(ArrayList<Character> x) {
