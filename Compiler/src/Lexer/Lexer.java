@@ -55,7 +55,7 @@ public class Lexer {
 	// private static boolean continueParse = true;
 
 	private static boolean inString = false;
-	private static boolean verbose = false;
+	public static boolean verbose;
 
 	static HashMap myHashMap = new HashMap();
 
@@ -79,8 +79,10 @@ public class Lexer {
 
 		if (args[1] != null) {
 			System.out.println("" + args[1]);
-			if (args[1] == "Y" || args[1] == "N" || args[1] == "y" || args[1] == "n") {
+			if (args[1].equals("Y" ) || args[1].equals("N" ) || args[1].equals("y" )|| args[1].equals("n")) {
+				
 				verboseCheck = args[1];
+				
 			}
 		} else {
 			System.out.println("Would you like to enjoy verbose mode? Please enter capital(Y/N)");
@@ -88,9 +90,11 @@ public class Lexer {
 			verboseCheck = input;
 		}
 
-		if (verboseCheck == "Y" || verboseCheck == "y") {
+		if (verboseCheck.equals("Y") || verboseCheck.equals("y")) {
+			System.out.println("YYYYYYYY");
 			verbose = true;
 		} else if (verboseCheck == "N" || verboseCheck == "n") {
+			System.out.println("NNNNNNNNNNn");
 			verbose = false;
 		}
 
@@ -326,5 +330,6 @@ public class Lexer {
 	public static boolean getVerbose() {
 		return verbose;
 	}
+	
 
 }
