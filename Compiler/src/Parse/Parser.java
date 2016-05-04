@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import CodeGenerator.Execution;
 import Lexer.Lexer;
 import SymbolTable.HashMapTable;
 import Tree.TreeNodeList;
@@ -26,7 +28,8 @@ public class Parser {
 	// private static ArrayList<HashMap> hashArray = new ArrayList();
 	// private static ArrayList<TreeNodeList> myASTarray = new ArrayList();
 
-	private static int counter = 0;;
+	private static int counter = 0;
+	private Execution myEXE;
 
 	public void Parser() {
 
@@ -63,6 +66,7 @@ public class Parser {
 		myHMT = new HashMapTable();
 		hashArray = new ArrayList();
 		myASTarray = new ArrayList();
+		myEXE = new Execution();
 		// counter = 0;
 
 		if (continueParse) {
@@ -117,7 +121,7 @@ public class Parser {
 			System.out.println("PRINTING AST");
 			System.out.println("::::::::::::");
 			for (int i = 0; i < myASTarray.size(); i++) {
-				System.out.println("Printing AST");
+				System.out.println("PRINTING AST");
 				myASTarray.get(counter).getRoot().print("", true);
 			}
 
@@ -127,6 +131,14 @@ public class Parser {
 				myHMT.scopeAST(myASTarray.get(i).getRoot());
 				System.out.println("------END---------");
 				System.out.println("");
+				myEXE.loadEnviornment(myASTarray.get(i).getRoot());
+				myEXE.printExe();
+				System.out.println();
+				System.out.println();
+				System.out.println("STATIC TABLE");
+				myEXE.printStatic();
+				System.out.println();
+				
 			}
 			for (int i = 0; i < myASTarray.size(); i++) {
 				// HashMapTable myHMT = new HashMapTable();
