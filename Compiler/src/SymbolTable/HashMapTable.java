@@ -17,6 +17,7 @@ public class HashMapTable {
 	//
 	private  ArrayList<HashMap> hashArray = new ArrayList();
 	private  int scopeCounter = 0;
+	
 
 	private  String varSetTo;
 	private  String varType;

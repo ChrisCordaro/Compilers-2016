@@ -18,7 +18,7 @@ public class Parser {
 	private ArrayList<TreeNodeList> myCSTarray;
 	private HashMapTable myHMT;
 	private ArrayList<HashMap> hashArray;
-	private ArrayList<TreeNodeList> myASTarray = new ArrayList();
+	public ArrayList<TreeNodeList> myASTarray = new ArrayList();
 	// private static TreeNodeList myCSTree = new TreeNodeList();
 	// private static ArrayList<TreeNodeList> myCSTarray = new ArrayList();
 	// private static TreeNodeList myASTree = new TreeNodeList();
@@ -30,6 +30,8 @@ public class Parser {
 
 	private static int counter = 0;
 	private Execution myEXE;
+	
+	private int testCounter = myASTarray.size();
 
 	public void Parser() {
 
@@ -132,12 +134,41 @@ public class Parser {
 				System.out.println("------END---------");
 				System.out.println("");
 				myEXE.loadEnviornment(myASTarray.get(i).getRoot());
-				myEXE.printExe();
+			
 				System.out.println();
 				System.out.println();
 				System.out.println("STATIC TABLE");
 				myEXE.printStatic();
 				System.out.println();
+				System.out.println();
+				System.out.println("JUMP TABLE");
+				myEXE.printJump();
+				System.out.println();
+				System.out.println();
+				myEXE.replaceJumpAddress();
+			//	System.out.println("Execution with replaced jumps");
+				
+				//myEXE.printExe();
+				//System.out.println(" ");
+				//System.out.println();
+				//replace static addresses and insert them into the exe run time
+				//
+				//myEXE.printExe();
+				
+				/*System.out.println("STATIC TABLE WITH CALCULATIONS");
+				
+			
+				System.out.println();
+				System.out.println();
+				System.out.println("Run time with replaced static addresses");
+				*/
+				myEXE.calculateStaticAddress();
+				myEXE.replaceStaticAddress();
+				//myEXE.printExe();
+				
+				myEXE.printExe();
+				System.out.println();
+				myEXE.printStatic();
 				
 			}
 			for (int i = 0; i < myASTarray.size(); i++) {
@@ -694,5 +725,9 @@ public class Parser {
 	public TreeNodeList getAST() {
 		return myASTarray.get(counter);
 	}
+	
+	
+	
+	
 
 }
