@@ -39,6 +39,7 @@ public class Parser {
 
 	// Here is where you create a leaf node
 	public void matchAndAnnihilate(String expectedToken) {
+	
 		
 		if (Lexer.getTokenArray().get(0).getType() == expectedToken) {
 			if (Lexer.getVerbose()) {
@@ -162,10 +163,11 @@ public class Parser {
 				System.out.println();
 				System.out.println("Run time with replaced static addresses");
 				*/
-				myEXE.calculateStaticAddress();
-				myEXE.replaceStaticAddress();
+				//myEXE.calculateStaticAddress();
+				//myEXE.replaceStaticAddress();
 				//myEXE.printExe();
 				
+				myEXE.fillInExecution();
 				myEXE.printExe();
 				System.out.println();
 				myEXE.printStatic();

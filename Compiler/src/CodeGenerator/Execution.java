@@ -34,7 +34,10 @@ public class Execution {
 		// }
 		
 		Iterator iter = t.getChildren().iterator();
-		
+		System.out.println(exeArray.size());
+		if(exeArray.size() > 256){
+			System.out.println("BROKEBROKENEOJREORJEORJOEJROEJRo");
+		}
 	
 
 		if (t.getData().contains("block")) {
@@ -68,15 +71,20 @@ public class Execution {
 			} else if (t.getData().equals("booleanWord")) {
 				addExeEntry("A9", "00", "8D", "XX");
 				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter);
+				staticCounter++;
 			} else if (t.getChildren().get(0).getData().equals("stringWord")) {
+				exeArray.add("A9");
 				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter);
+				staticCounter++;
+				
 			}
 		} else if (t.getData().equals("assignStatement")) {
 			updateScope(t);
 			// Anything BUT comparing one variable to another
 			if(t.getChildren().get(1).getData().startsWith("\"")){
 				System.out.println("assignment to a string");
-				dealWithString(t.getChildren().get(1));
+				dealWithString(t.getChildren().get(1).getData());
+				lookUpStoreStaticPoint(t.getChildren().get(0));
 			}else if ( t.getChildren().get(1).getData().matches("(true)")
 					|| t.getChildren().get(1).getData().matches("(false)")
 					|| t.getChildren().get(1).getData().matches("(\\d)")) {
@@ -101,7 +109,7 @@ public class Execution {
 
 			} else {
 				// printing a var
-
+				
 				loadPrint(t.getChildren().get(0));
 
 			}
@@ -132,44 +140,39 @@ public class Execution {
 
 	}
 	
-	public void dealWithString(TreeNode t){
-		String[] brokenT = t.getData().split("(?!^)");
-		ArrayList<String> s = new ArrayList<String> ();
-		for(int i = 0; i < brokenT.length; i ++){
-			
-			s.add(brokenT[i]);
+	public void dealWithString(String string){
+		
+		stringArray.add(0, "00");
+		String tempString = string.split("\"")[1];
+		System.out.println(tempString);
+		for(int i = tempString.length()-1; i >= 0; i --){
+			System.out.println(tempString.charAt(i));
+			stringArray.add(0, Integer.toHexString((int)tempString.charAt(i)));
 		}
 		
+		System.out.println(stringArray);
+		//put into exeArray
+		//pointer = 96(exeArray max size) - size of stringArray(heap)
+		String stringAddress = Integer.toHexString(256 - stringArray.size());
+		exeArray.add(stringAddress);
+		exeArray.add("8D");
+		//Find value of string entered
 	
-		
-		
-		
-		for(int i = 0; i < s.size(); i ++){
-			if(s.get(i) == "\"" || s.get(i) == "00"){
-				
-			}else{
-				//convert values 
-			//	convertStringArray(s);
-			}
-		}
-		
-		exeArray.add("A9");
-		int strLength = t.getData().length() + 1;//for "00"
-		String stringLength = Integer.toString(strLength);
-		exeArray.add(stringLength);
 	
-		//convertStringArray(stringArray);
 	}
 	
-	public void convertStringArray(ArrayList<String> s){
-		for(int i = 0; i < s.size(); i ++){
-			System.out.println("ASD");
-			String x =  Integer.decode(s.get(i));
-			stringArray.add(i, x);
-			
+	public void lookUpStoreStaticPoint(TreeNode t){
+		for (int i = staticArray.size() - 1; i >= 0; i--) {
+			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This currently wont search other scopes if this fails
+				
+				String tempT = staticArray.get(i).getTemp().substring(0, 2);
+				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
+
+				exeArray.add(tempT);
+				exeArray.add(tempXX);
+				
+			}
 		}
-		s.add("00");
-		System.out.println(s);
 	}
 
 	public void calculateStaticAddress() {
@@ -248,6 +251,7 @@ public class Execution {
 
 	public void addExeEntry(String opCode, String value, String accu, String xx) {
 		String tempLocal = "T" + tempCounter;
+		
 		exeArray.add(opCode);
 		exeArray.add(value);
 		exeArray.add(accu);
@@ -303,8 +307,8 @@ public class Execution {
 		exeArray.add("AC");
 		System.out.println(scopeCounter);
 		System.out.println(t.getData());
-		for (int i = staticArray.size() - 1; i >= 0; i--) {
-			if (staticArray.get(i).getVar().equals(t.getData())) {
+		for (int i = staticArray.size()-1; i >=0; i--) {
+			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This currently wont search other scopes if this fails
 				System.out.println("ASDDDDDDDDDDDdd");
 				String tempT = staticArray.get(i).getTemp().substring(0, 2);
 				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
@@ -352,6 +356,14 @@ public class Execution {
 		// counter
 		jumpCounter++;
 
+	}
+	
+	public void fillInExecution(){
+		int num = 256 - exeArray.size() - stringArray.size();
+		for(int i = 0; i < num; i ++){
+			exeArray.add("00");
+		}
+		exeArray.addAll(stringArray);
 	}
 
 	public void calculateJump() {
