@@ -34,15 +34,14 @@ public class Execution {
 		// }
 		
 		Iterator iter = t.getChildren().iterator();
-		System.out.println(exeArray.size());
+		
 		if(exeArray.size() > 256){
 			System.out.println("BROKEBROKENEOJREORJEORJOEJROEJRo");
 		}
 	
 
 		if (t.getData().contains("block")) {
-			// Create new scope
-			// System.out.println("New Block/Scope");
+			scopeCounter = 0;
 
 		} else if (t.getData().equals("varDecl")) {
 			updateScope(t);
@@ -113,13 +112,24 @@ public class Execution {
 				loadPrint(t.getChildren().get(0));
 
 			}
-		} else if (t.getData().equals("==")) {
+		}else if(t.getData().equals("if")){
 			updateScope(t);
+		}else if (t.getData().equals("==")) {
+			//updateScope(t);
 			scopeOfIf = scopeCounter;
+			if (t.getChildren().get(1).getData().startsWith("\"") || t.getChildren().get(1).getData().matches("(true)")
+					|| t.getChildren().get(1).getData().matches("(false)")
+					|| t.getChildren().get(1).getData().matches("(\\d)")) {
+				//literal
+				System.out.println("ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDDD");
+				loadComparisonConstant(t);
+			}else{
+				loadComparision(t);
+			}
 			// if(a==b)
 			// load the X register with the contents of a
 			// compare the X register to the contents of b
-			loadComparision(t);
+		
 
 		}
 
@@ -162,15 +172,18 @@ public class Execution {
 	}
 	
 	public void lookUpStoreStaticPoint(TreeNode t){
+		
 		for (int i = staticArray.size() - 1; i >= 0; i--) {
 			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This currently wont search other scopes if this fails
-				
+				System.out.println("HELLOHELLOHELLOHELLO");
 				String tempT = staticArray.get(i).getTemp().substring(0, 2);
 				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
 
 				exeArray.add(tempT);
 				exeArray.add(tempXX);
 				
+			}else{
+				System.out.println("HEY");
 			}
 		}
 	}
@@ -356,6 +369,32 @@ public class Execution {
 		// counter
 		jumpCounter++;
 
+	}
+	
+	public void loadComparisonConstant(TreeNode t){
+		
+		exeArray.add("A2");
+		exeArray.add(t.getChildren().get(1).getData());
+		exeArray.add("EC");
+		System.out.println(scopeCounter);
+		for (int i = staticArray.size()-1; i >=0; i--){
+			
+			if(staticArray.get(i).getVar().equals(t.getChildren().get(0).getData()) && staticArray.get(i).getScope() == scopeCounter){
+				String tempT = staticArray.get(i).getTemp().substring(0, 2);
+				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
+
+				exeArray.add(tempT);
+				exeArray.add(tempXX);
+				
+			}else{
+				
+			}
+		}
+		exeArray.add("D0");
+		exeArray.add("J" + jumpCounter); // This should be determined by some
+											// sort of jump
+		// counter
+		jumpCounter++;
 	}
 	
 	public void fillInExecution(){

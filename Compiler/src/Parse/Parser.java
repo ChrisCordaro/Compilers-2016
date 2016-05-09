@@ -167,7 +167,7 @@ public class Parser {
 				//myEXE.replaceStaticAddress();
 				//myEXE.printExe();
 				
-				myEXE.fillInExecution();
+				//myEXE.fillInExecution();
 				myEXE.printExe();
 				System.out.println();
 				myEXE.printStatic();
