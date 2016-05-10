@@ -134,6 +134,9 @@ public class Parser {
 				myHMT.scopeAST(myASTarray.get(i).getRoot());
 				System.out.println("------END---------");
 				System.out.println("");
+				
+				//check if keep going == true
+				if(myHMT.getKeepGoing()){
 				myEXE.loadEnviornment(myASTarray.get(i).getRoot());
 			
 				System.out.println();
@@ -167,9 +170,8 @@ public class Parser {
 				//myEXE.printExe();
 				
 				
-				//myEXE.calculateStaticAddress();
-				//myEXE.replaceStaticAddress();
-				//myEXE.fillInExecution();
+				
+				myEXE.getExeArray().add("00");
 				if(myEXE.getIf() == true){
 					
 					myEXE.calculateJump();
@@ -177,11 +179,22 @@ public class Parser {
 				}else{
 					//myEXE.replaceJumpAddress();
 				}
+				myEXE.calculateStaticAddress();
+				myEXE.replaceStaticAddress();
+				//myEXE.fillInExecution();
 				myEXE.printExe();
 				System.out.println();
 				myEXE.printStatic();
 				
+				System.out.println();
+			
+				}else{
+					System.out.println("Cant continue");
+				}
+				
+			
 			}
+			System.out.println();
 			for (int i = 0; i < myASTarray.size(); i++) {
 				// HashMapTable myHMT = new HashMapTable();
 				System.out.println("Printing hash array for program: ");
@@ -189,6 +202,8 @@ public class Parser {
 				myHMT.printHashArray(myHMT.getHashArray());
 				System.out.println("--------------END---------------");
 			}
+			
+		
 			System.out.println("NEW PROGRAM NEW PROGRAM NEW PROGRAM");
 
 		}

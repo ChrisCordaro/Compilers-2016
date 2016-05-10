@@ -84,16 +84,17 @@ public class Execution {
 				System.out.println("assignment to a string");
 				dealWithString(t.getChildren().get(1).getData());
 				lookUpStoreStaticPoint(t.getChildren().get(0));
-			} else if (t.getChildren().get(1).getData().matches("(true)")
-					|| t.getChildren().get(1).getData().matches("(false)")){
+			} else if (t.getChildren().get(1).getData().matches("(true)")){
 				
-				addExeEntry("A9", t.getChildren().get(1).getData(), "8D", "XX");
+				addExeEntry("A9", "01", "8D", "XX");
 			
-			} else if(t.getChildren().get(1).getData().matches("\\d")){
+			} else if(t.getChildren().get(1).getData().matches("(false)")){
+				addExeEntry("A9", "00", "8D", "XX");
+			}else if(t.getChildren().get(1).getData().matches("\\d")){
 				addExeEntry("A9", convertData(t.getChildren().get(1)), "8D", "XX");
 				
 			}else {
-				System.out.println("LUKELUKE");
+				
 				// Comparing two variable
 				// Load accumulator with contents of the second value
 				// Store the accumulator in the address for the first one
@@ -124,7 +125,7 @@ public class Execution {
 					|| t.getChildren().get(1).getData().matches("(false)")
 					|| t.getChildren().get(1).getData().matches("(\\d)")) {
 				// literal
-				System.out.println("ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDDD");
+				
 				loadComparisonConstant(t);
 			} else {
 				loadComparision(t);
@@ -173,7 +174,7 @@ public class Execution {
 		// put into exeArray
 		// pointer = 256(exeArray max size) - size of stringArray(heap)
 		String stringAddress = Integer.toHexString(256 - stringArray.size());
-		exeArray.add(stringAddress);
+		exeArray.add(stringAddress.toUpperCase());
 		exeArray.add("8D");
 		// Find value of string entered
 
@@ -208,7 +209,7 @@ public class Execution {
 		int endValue = exeArray.size() + 1; 
 											
 		String endHex = convert(endValue);
-		System.out.println(endHex + "ASDASDASDASDASDAS");
+
 		// System.out.println("END ADDRESS IS " + endHex);
 
 		for (int i = 0; i < staticArray.size(); i++) {
@@ -223,6 +224,7 @@ public class Execution {
 
 	public void replaceStaticAddress() {
 		for (int i = 0; i < staticArray.size(); i++) {
+		
 			String tempT = staticArray.get(i).getTemp().substring(0, 2);
 			String tempXX = staticArray.get(i).getTemp().substring(2, 4);
 			// System.out.println(tempT);
@@ -235,7 +237,8 @@ public class Execution {
 
 			Collections.replaceAll(exeArray, tempT, tempAdd);
 			Collections.replaceAll(exeArray, tempXX, tempAddXX);
-		}
+			}
+		
 
 	}
 
@@ -550,5 +553,13 @@ public class Execution {
 	
 	public boolean getIf(){
 		return insideIf;
+	}
+
+	public ArrayList<String> getExeArray() {
+		return exeArray;
+	}
+
+	public void setExeArray(ArrayList<String> exeArray) {
+		this.exeArray = exeArray;
 	}
 }
