@@ -146,7 +146,7 @@ public class Parser {
 				myEXE.printJump();
 				System.out.println();
 				System.out.println();
-				myEXE.replaceJumpAddress();
+				
 			//	System.out.println("Execution with replaced jumps");
 				
 				//myEXE.printExe();
@@ -163,11 +163,20 @@ public class Parser {
 				System.out.println();
 				System.out.println("Run time with replaced static addresses");
 				*/
-				//myEXE.calculateStaticAddress();
-				//myEXE.replaceStaticAddress();
+			
 				//myEXE.printExe();
 				
+				
+				//myEXE.calculateStaticAddress();
+				//myEXE.replaceStaticAddress();
 				//myEXE.fillInExecution();
+				if(myEXE.getIf() == true){
+					
+					myEXE.calculateJump();
+					myEXE.replaceJumpAddress();
+				}else{
+					//myEXE.replaceJumpAddress();
+				}
 				myEXE.printExe();
 				System.out.println();
 				myEXE.printStatic();

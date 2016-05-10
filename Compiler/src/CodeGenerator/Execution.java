@@ -27,18 +27,18 @@ public class Execution {
 	private ArrayList<Integer> calculatedJumps = new ArrayList<Integer>();
 
 	public void loadEnviornment(TreeNode t) {
+		
 		// System.out.println(programCounter);
 
 		// if (programCounter == 25) {
 		// calculateJump();
 		// }
-		
+
 		Iterator iter = t.getChildren().iterator();
-		
-		if(exeArray.size() > 256){
+
+		if (exeArray.size() > 256) {
 			System.out.println("BROKEBROKENEOJREORJEORJOEJROEJRo");
 		}
-	
 
 		if (t.getData().contains("block")) {
 			scopeCounter = 0;
@@ -64,38 +64,41 @@ public class Execution {
 				// load accumulator with 0
 				// A9 00 8D T0 XX
 				addExeEntry("A9", "00", "8D", "XX");
-				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter);
+				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter, "int");
 				staticCounter++;
 
-			} else if (t.getData().equals("booleanWord")) {
+			} else if (t.getChildren().get(0).getData().equals("booleanWord")) {
 				addExeEntry("A9", "00", "8D", "XX");
-				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter);
+				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter, "bool");
 				staticCounter++;
 			} else if (t.getChildren().get(0).getData().equals("stringWord")) {
 				exeArray.add("A9");
-				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter);
+				addStaticEntry(t.getChildren().get(1).getData(), "idk", scopeCounter, "string");
 				staticCounter++;
-				
+
 			}
 		} else if (t.getData().equals("assignStatement")) {
 			updateScope(t);
 			// Anything BUT comparing one variable to another
-			if(t.getChildren().get(1).getData().startsWith("\"")){
+			if (t.getChildren().get(1).getData().startsWith("\"")) {
 				System.out.println("assignment to a string");
 				dealWithString(t.getChildren().get(1).getData());
 				lookUpStoreStaticPoint(t.getChildren().get(0));
-			}else if ( t.getChildren().get(1).getData().matches("(true)")
-					|| t.getChildren().get(1).getData().matches("(false)")
-					|| t.getChildren().get(1).getData().matches("(\\d)")) {
+			} else if (t.getChildren().get(1).getData().matches("(true)")
+					|| t.getChildren().get(1).getData().matches("(false)")){
+				
 				addExeEntry("A9", t.getChildren().get(1).getData(), "8D", "XX");
-
-			} else {
+			
+			} else if(t.getChildren().get(1).getData().matches("\\d")){
+				addExeEntry("A9", convertData(t.getChildren().get(1)), "8D", "XX");
+				
+			}else {
+				System.out.println("LUKELUKE");
 				// Comparing two variable
 				// Load accumulator with contents of the second value
 				// Store the accumulator in the address for the first one
 				// which
 
-			
 				twoVarAssign(t.getChildren().get(0), t.getChildren().get(1));
 			}
 		} else if (t.getData().equals("print")) {
@@ -108,96 +111,110 @@ public class Execution {
 
 			} else {
 				// printing a var
-				
+
 				loadPrint(t.getChildren().get(0));
 
 			}
-		}else if(t.getData().equals("if")){
+		} else if (t.getData().equals("if")) {
 			updateScope(t);
-		}else if (t.getData().equals("==")) {
-			//updateScope(t);
+		} else if (t.getData().equals("==")) {
+			// updateScope(t);
 			scopeOfIf = scopeCounter;
 			if (t.getChildren().get(1).getData().startsWith("\"") || t.getChildren().get(1).getData().matches("(true)")
 					|| t.getChildren().get(1).getData().matches("(false)")
 					|| t.getChildren().get(1).getData().matches("(\\d)")) {
-				//literal
+				// literal
 				System.out.println("ASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSDDDDDDDDDDDDDDDDDDDDDDDD");
 				loadComparisonConstant(t);
-			}else{
+			} else {
 				loadComparision(t);
 			}
 			// if(a==b)
 			// load the X register with the contents of a
 			// compare the X register to the contents of b
-		
 
 		}
 
-		while(iter.hasNext())
+		while (iter.hasNext())
 
-		{
-				programCounter++;
-				if (insideIf) {
-					if (!checkChildOfIf(t)) {
-						calculateJump();
-					}
+		{	
+			
+			if (insideIf) {
+				if (!checkChildOfIf(t)) {
+					calculateJump();
+					replaceJumpAddress();
 				}
-				loadEnviornment((TreeNode) iter.next());
-		
+			}
+			loadEnviornment((TreeNode) iter.next());
 
 		}
-		
-
+	
 	}
 	
-	public void dealWithString(String string){
-		
+	public String convertData(TreeNode t){
+		if(t.getData().length() <= 1){
+			return "0" + t.getData();
+		}else{
+			return t.getData();
+		}
+	}
+
+	public void dealWithString(String string) {
+
 		stringArray.add(0, "00");
 		String tempString = string.split("\"")[1];
 		System.out.println(tempString);
-		for(int i = tempString.length()-1; i >= 0; i --){
+		for (int i = tempString.length() - 1; i >= 0; i--) {
 			System.out.println(tempString.charAt(i));
-			stringArray.add(0, Integer.toHexString((int)tempString.charAt(i)));
+			stringArray.add(0, Integer.toHexString((int) tempString.charAt(i)));
 		}
-		
+
 		System.out.println(stringArray);
-		//put into exeArray
-		//pointer = 96(exeArray max size) - size of stringArray(heap)
+		// put into exeArray
+		// pointer = 256(exeArray max size) - size of stringArray(heap)
 		String stringAddress = Integer.toHexString(256 - stringArray.size());
 		exeArray.add(stringAddress);
 		exeArray.add("8D");
-		//Find value of string entered
-	
-	
+		// Find value of string entered
+
 	}
-	
-	public void lookUpStoreStaticPoint(TreeNode t){
-		
+
+	public void lookUpStoreStaticPoint(TreeNode t) {
+
 		for (int i = staticArray.size() - 1; i >= 0; i--) {
-			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This currently wont search other scopes if this fails
+			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This
+																													// currently
+																													// wont
+																													// search
+																													// other
+																													// scopes
+																													// if
+																													// this
+																													// fails
 				System.out.println("HELLOHELLOHELLOHELLO");
 				String tempT = staticArray.get(i).getTemp().substring(0, 2);
 				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
 
 				exeArray.add(tempT);
 				exeArray.add(tempXX);
-				
-			}else{
+
+			} else {
 				System.out.println("HEY");
 			}
 		}
 	}
 
 	public void calculateStaticAddress() {
-		int endValue = exeArray.size() + 1; // this wont work when strings are
-											// introduced
+		int endValue = exeArray.size() + 1; 
+											
 		String endHex = convert(endValue);
+		System.out.println(endHex + "ASDASDASDASDASDAS");
 		// System.out.println("END ADDRESS IS " + endHex);
 
 		for (int i = 0; i < staticArray.size(); i++) {
 
 			// System.out.println(endHex);
-			endHex = convert(endValue++);
+			endHex = convert(endValue++).toUpperCase();
 
 			staticArray.get(i).setAddress(endHex + "00");
 		}
@@ -224,7 +241,7 @@ public class Execution {
 
 	public boolean checkChildOfIf(TreeNode t) {
 		while (!t.getData().equals("goal")) {
-			
+
 			if (t.getParent().getData().equals("if")) {
 				System.out.println(t.getData() + " YOURE A CHILD OF AN IF STATMENET");
 				insideIf = true;
@@ -242,8 +259,48 @@ public class Execution {
 
 	public void replaceJumpAddress() {
 		for (int i = 0; i < jumpArray.size(); i++) {
-			Collections.replaceAll(exeArray, jumpArray.get(i).getTemp(), jumpArray.get(i).getDistance());
+			if(jumpArray.get(i).getDistance().length() == 1){
+				Collections.replaceAll(exeArray, jumpArray.get(i).getTemp(), "0" + jumpArray.get(i).getDistance());
+			}else{
+				Collections.replaceAll(exeArray, jumpArray.get(i).getTemp(), jumpArray.get(i).getDistance());
+			}
+		
 		}
+	}
+	public void calculateJump() {
+
+		int start = 0;
+		int finish = 0;
+
+		for (int i = 0; i < exeArray.size(); i++) {
+			if (exeArray.get(i).equals("J" + (jumpCounter - 1)) && !calculatedJumps.contains(jumpCounter - 1)) {
+				System.out.println("GOT A JUMP FOR JUMP " + (jumpCounter - 1));
+				start = i;
+				finish = exeArray.size();
+				calculatedJumps.add(jumpCounter - 1);
+				String finalValue = Integer.toString(finish - start);
+				addJumpEntry("J" + (jumpCounter - 1), finalValue);
+			}
+
+		}
+
+		if (finish - start != 0) {
+			System.out.println(finish - start);
+			for (int i = 0; i < calculatedJumps.size(); i++) {
+				System.out.println("Already calculated Jump : " + calculatedJumps.get(i));
+
+			}
+		}
+
+	}
+
+
+	public void addJumpEntry(String temp, String distance) {
+		JumpTable j = new JumpTable();
+		j.setTemp(temp);
+		j.setDistance(distance);
+		jumpArray.add(j);
+
 	}
 
 	public String convert(int n) {
@@ -264,7 +321,7 @@ public class Execution {
 
 	public void addExeEntry(String opCode, String value, String accu, String xx) {
 		String tempLocal = "T" + tempCounter;
-		
+
 		exeArray.add(opCode);
 		exeArray.add(value);
 		exeArray.add(accu);
@@ -274,7 +331,7 @@ public class Execution {
 
 	}
 
-	public void addStaticEntry(String var, String add, int scope) {
+	public void addStaticEntry(String var, String add, int scope, String type) {
 		StaticTable t = new StaticTable();
 		staticArray.add(t);
 		String tempLocal = "T" + tempCounter + "XX";
@@ -283,6 +340,7 @@ public class Execution {
 		staticArray.get(staticCounter).setTemp(tempLocal);
 		staticArray.get(staticCounter).setAddress(add);
 		staticArray.get(staticCounter).setScope(scope);
+		staticArray.get(staticCounter).setType(type);
 	}
 
 	public void twoVarAssign(TreeNode left, TreeNode right) {
@@ -320,8 +378,12 @@ public class Execution {
 		exeArray.add("AC");
 		System.out.println(scopeCounter);
 		System.out.println(t.getData());
-		for (int i = staticArray.size()-1; i >=0; i--) {
-			if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getScope() == scopeCounter) { // This currently wont search other scopes if this fails
+		
+		for (int i = staticArray.size() - 1; i >= 0; i--) {
+			//starts from the currentScope and then checks the scopes less than current scope 
+			//fix the problem that printing a var thats a string will do 01 instead of 02
+			if (staticArray.get(i).getVar().equals(t.getData()) && !staticArray.get(i).getType().equals("string")) { 
+										
 				System.out.println("ASDDDDDDDDDDDdd");
 				String tempT = staticArray.get(i).getTemp().substring(0, 2);
 				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
@@ -331,7 +393,19 @@ public class Execution {
 				exeArray.add("A2");
 				exeArray.add("01");
 				exeArray.add("FF");
+				break;
 
+			} else if (staticArray.get(i).getVar().equals(t.getData()) && staticArray.get(i).getType().equals("string")){
+				System.out.println("ASDDDDDDDDDDDdd");
+				String tempT = staticArray.get(i).getTemp().substring(0, 2);
+				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
+
+				exeArray.add(tempT);
+				exeArray.add(tempXX);
+				exeArray.add("A2");
+				exeArray.add("02");
+				exeArray.add("FF");
+				break;
 			}
 		}
 
@@ -370,24 +444,25 @@ public class Execution {
 		jumpCounter++;
 
 	}
-	
-	public void loadComparisonConstant(TreeNode t){
-		
+
+	public void loadComparisonConstant(TreeNode t) {
+
 		exeArray.add("A2");
 		exeArray.add(t.getChildren().get(1).getData());
 		exeArray.add("EC");
 		System.out.println(scopeCounter);
-		for (int i = staticArray.size()-1; i >=0; i--){
-			
-			if(staticArray.get(i).getVar().equals(t.getChildren().get(0).getData()) && staticArray.get(i).getScope() == scopeCounter){
+		for (int i = staticArray.size() - 1; i >= 0; i--) {
+
+			if (staticArray.get(i).getVar().equals(t.getChildren().get(0).getData())
+					&& staticArray.get(i).getScope() == scopeCounter) {
 				String tempT = staticArray.get(i).getTemp().substring(0, 2);
 				String tempXX = staticArray.get(i).getTemp().substring(2, 4);
 
 				exeArray.add(tempT);
 				exeArray.add(tempXX);
-				
-			}else{
-				
+
+			} else {
+
 			}
 		}
 		exeArray.add("D0");
@@ -396,41 +471,15 @@ public class Execution {
 		// counter
 		jumpCounter++;
 	}
-	
-	public void fillInExecution(){
+
+	public void fillInExecution() {
 		int num = 256 - exeArray.size() - stringArray.size();
-		for(int i = 0; i < num; i ++){
+		for (int i = 0; i < num; i++) {
 			exeArray.add("00");
 		}
 		exeArray.addAll(stringArray);
 	}
 
-	public void calculateJump() {
-
-		int start = 0;
-		int finish = 0;
-
-		for (int i = 0; i < exeArray.size(); i++) {
-			if (exeArray.get(i).equals("J" + (jumpCounter - 1)) && !calculatedJumps.contains(jumpCounter - 1)) {
-				System.out.println("GOT A JUMP FOR JUMP " + (jumpCounter - 1));
-				start = i;
-				finish = exeArray.size();
-				calculatedJumps.add(jumpCounter - 1);
-				String finalValue = Integer.toString(finish - start);
-				addJumpEntry("J" + (jumpCounter - 1), finalValue);
-			}
-
-		}
-
-		if (finish - start != 0) {
-			System.out.println(finish - start);
-			for (int i = 0; i < calculatedJumps.size(); i++) {
-				System.out.println("Already calculated Jump : " + calculatedJumps.get(i));
-
-			}
-		}
-
-	}
 
 	public boolean findIfInIf(TreeNode t) {
 
@@ -449,13 +498,6 @@ public class Execution {
 		return false;
 	}
 
-	public void addJumpEntry(String temp, String distance) {
-		JumpTable j = new JumpTable();
-		j.setTemp(temp);
-		j.setDistance(distance);
-		jumpArray.add(j);
-
-	}
 
 	public void printExe() {
 		for (int i = 0; i < exeArray.size(); i++) {
@@ -486,6 +528,9 @@ public class Execution {
 			System.out.print(staticArray.get(i).getScope());
 			System.out.print(" ");
 			System.out.print(" ");
+			System.out.print(staticArray.get(i).getType());
+			System.out.print(" ");
+			System.out.print(" ");
 		}
 	}
 
@@ -502,5 +547,8 @@ public class Execution {
 	public int getTempCounter() {
 		return tempCounter;
 	}
-
+	
+	public boolean getIf(){
+		return insideIf;
+	}
 }

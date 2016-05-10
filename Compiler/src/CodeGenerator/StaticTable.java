@@ -4,6 +4,16 @@ public class StaticTable {
 	private String var;
 	private String temp;
 	private String address;
+	private String type;
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	private int scope;
 	
 	public int getScope() {
